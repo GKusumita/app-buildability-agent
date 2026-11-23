@@ -1,0 +1,31 @@
+{
+  "sample_size": 1,
+  "queued_count": 1,
+  "queue_rate": 1.0,
+  "apps": [
+    {
+      "id": 97,
+      "name": "higgsfield",
+      "research_failures": [
+        "api_type: retry research failed: retry evidence_invalid: api_type: evidence_invalid: https://higgsfield.ai/creator-hub/help-center/getting-started/what-is-the-higgsfield-api; api_type: evidence_invalid: no valid citation",
+        "unresolved research field: api_type",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      ],
+      "verifier_rejections": [
+        "Verifier call failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "api_type: insufficient_evidence: Verifier failed",
+        "self_serve: contradicted: The claim states 'free_self_serve', but documentation and guides explicitly confirm there is no permanent free tier or free monthly allowance; it is pay-as-you-go from the first request requiring a prepaid balance and payment method.",
+        "verdict: insufficient_evidence: Verifier failed"
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "api_type",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    }
+  ]
+}

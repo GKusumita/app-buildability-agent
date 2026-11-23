@@ -5,11 +5,35 @@ import csv
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from schema import AppResult, ROOT
+from schema import APIType, AppResult, Auth, Blocker, ROOT, SelfServe, Tri, Verdict
 from pipeline.common import read_pass, write_immutable
 
 FIELDS = ["auth_methods", "self_serve", "app_review_required", "api_type",
           "official_mcp", "verdict", "blocker"]
+ALLOWED = {
+    "auth_methods": {item.value for item in Auth},
+    "self_serve": {item.value for item in SelfServe},
+    "app_review_required": {item.value for item in Tri},
+    "api_type": {item.value for item in APIType},
+    "official_mcp": {"exists", "not_exists", "unknown"},
+    "verdict": {item.value for item in Verdict},
+    "blocker": {item.value for item in Blocker},
+}
+
+
+def label_issues(rows: list[dict]) -> list[str]:
+    """Reject incomplete or out-of-schema human labels before scoring."""
+    issues = []
+    for row in rows:
+        for field in FIELDS:
+            value = (row.get(field) or "").strip()
+            if not value:
+                issues.append(f"{row['name']}: {field} is blank")
+                continue
+            values = [part.strip() for part in value.split("|")] if field in {"auth_methods", "api_type"} else [value]
+            if any(part not in ALLOWED[field] for part in values):
+                issues.append(f"{row['name']}: {field} is outside its closed values")
+    return issues
 
 
 def normalize(field: str, value: object) -> object:
@@ -34,13 +58,14 @@ def main() -> None:
         gold = list(csv.DictReader(handle))
     if len(gold) != 25 or len({row["id"] for row in gold}) != 25:
         raise SystemExit("gold.csv must contain 25 unique labelled apps")
-    for row in gold:
-        if any(not row.get(field, "").strip() for field in FIELDS):
-            raise SystemExit(f"gold.csv has an unlabelled field for {row['name']}")
+    issues = label_issues(gold)
+    if issues:
+        raise SystemExit("gold.csv needs human correction before scoring:\n" + "\n".join(issues[:25]))
     metrics = {}
     misses = []
     for stage in ("pass1", "pass2", "pass3"):
-        path = ROOT / "data" / f"{stage}.json"
+        final = ROOT / "data" / "pass3_final.json"
+        path = final if stage == "pass3" and final.exists() else ROOT / "data" / f"{stage}.json"
         if not path.exists():
             raise SystemExit(f"Missing full-run output: {path}")
         records = {str(record["result"]["id"]): AppResult.model_validate(record["result"])

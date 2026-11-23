@@ -12,11 +12,12 @@ from pydantic import ValidationError
 from schema import (APIType, AppResult, Auth, Breadth, Confidence, Evidence,
                     SelfServe, Tri, Verdict, load_apps, unknown_result)
 from pipeline.evidence_check import validate_evidence
-from pipeline.llm import normalise_app_result_payload, provider_config
+from pipeline.llm import model_for, normalise_app_result_payload, provider_config, structured_call
 from pipeline.pass3_verify import (Check, Verification, compute_confidence,
                                    consistency, unknown_fields, verify)
 from pipeline.research import Tavily, quote_bank, resolve_quote_ids
-from pipeline.rules import apply_rule2
+from pipeline.rules import apply_rule2, constrain_official_mcp
+from pipeline.score import label_issues
 
 
 class FakeResponse:
@@ -53,6 +54,17 @@ class CoreTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             AppResult.model_validate(row)
         self.assertEqual(len(load_apps()), 100)
+
+    def test_scoring_rejects_incomplete_or_non_enum_human_labels(self):
+        row = {"name": "Salesforce", "auth_methods": "oauth2", "self_serve": "free_self_serve",
+               "app_review_required": "false", "api_type": "rest", "official_mcp": "not_exists",
+               "verdict": "buildable_now", "blocker": "none"}
+        self.assertEqual(label_issues([row]), [])
+        row["self_serve"] = "paid_self_serve"
+        row["verdict"] = ""
+        issues = label_issues([row])
+        self.assertTrue(any("self_serve" in issue for issue in issues))
+        self.assertTrue(any("verdict" in issue for issue in issues))
 
     def test_verbatim_evidence_fails_closed(self):
         url = "https://docs.example.com/auth"
@@ -100,6 +112,17 @@ class CoreTests(unittest.TestCase):
         checked, invalid = validate_evidence(fixed, pages)
         self.assertEqual(invalid, [])
         self.assertEqual(str(checked.self_serve), "not_applicable")
+
+    def test_official_mcp_requires_app_owned_mcp_location(self):
+        row = unknown_result(self.app, "test")
+        row.official_mcp = "https://github.com/unrelated/mcp-server"
+        checked, issue = constrain_official_mcp(self.app, row)
+        self.assertEqual(checked.official_mcp, "unknown")
+        self.assertIsNotNone(issue)
+        row.official_mcp = "https://mcp.salesforce.com/mcp"
+        checked, issue = constrain_official_mcp(self.app, row)
+        self.assertEqual(checked.official_mcp, row.official_mcp)
+        self.assertIsNone(issue)
 
     def test_confidence_comes_from_checks_and_unknown_count(self):
         row = unknown_result(self.app, "test")
@@ -150,12 +173,41 @@ class CoreTests(unittest.TestCase):
         asyncio.run(work())
 
     def test_openrouter_model_mapping(self):
-        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+        with patch.dict("os.environ", {"LLM_PROVIDER": "openrouter", "OPENROUTER_API_KEY": "fake-key"}):
             provider, endpoint, key, model = provider_config("gpt-4.1-mini")
         self.assertEqual(provider, "openrouter")
         self.assertEqual(model, "openai/gpt-4.1-mini")
         self.assertEqual(key, "fake-key")
         self.assertTrue(endpoint.endswith("/chat/completions"))
+
+    def test_gemini_selection_and_native_structured_request(self):
+        class GeminiClient:
+            async def post(self, url, **kwargs):
+                self.url, self.kwargs = url, kwargs
+                return FakeResponse({"candidates": [{"finishReason": "STOP", "content": {
+                    "parts": [{"text": '{"status":"supported","reason":"verified"}'}]}}],
+                    "usageMetadata": {"totalTokenCount": 17}})
+
+        async def work():
+            client = GeminiClient()
+            with tempfile.TemporaryDirectory() as directory:
+                (Path(directory) / "logs").mkdir()
+                with patch("pipeline.llm.ROOT", Path(directory)), patch.dict("os.environ", {
+                        "LLM_PROVIDER": "gemini", "GEMINI_API_KEY": "fake-gemini-key",
+                        "OPENROUTER_API_KEY": "unused-router-key", "LLM_MODEL": "gemini-3.5-flash-lite",
+                        "LLM_VERIFY_MODEL": "gemini-3.8-flash"}):
+                    self.assertEqual(model_for(verify=True), "gemini-3.8-flash")
+                    answer, usage = await structured_call(client, model_for(verify=True),
+                                                          "Check one claim", Check, "test:gemini")
+            return client, answer, usage
+
+        client, answer, usage = asyncio.run(work())
+        self.assertEqual(answer.status, "supported")
+        self.assertEqual(usage["totalTokenCount"], 17)
+        self.assertIn("gemini-3.8-flash:generateContent", client.url)
+        self.assertEqual(client.kwargs["headers"], {"x-goog-api-key": "fake-gemini-key"})
+        self.assertEqual(client.kwargs["json"]["generationConfig"]["responseMimeType"],
+                         "application/json")
 
     def test_mixed_no_auth_sentinel_is_removed_for_hosted_api(self):
         payload = unknown_result(self.app, "test").model_dump(mode="json")

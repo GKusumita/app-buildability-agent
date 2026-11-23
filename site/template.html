@@ -85,7 +85,9 @@
   const $ = id => document.getElementById(id);
   const el = (tag, text, cls) => { const node=document.createElement(tag); if(text!==undefined) node.textContent=String(text); if(cls) node.className=cls; return node; };
   const label = value => String(value ?? 'unknown').replaceAll('_',' ');
-  $('run-status').textContent = `${d.verified_apps}/${d.total_apps} apps verified · ${d.status === 'complete' ? 'final pass available' : 'research pending'}`;
+  $('run-status').textContent = d.status === 'complete'
+    ? `${d.verified_apps}/${d.total_apps} final rows · ${d.human_queue.length} need human review · ${d.provider_failure_count} provider ${d.provider_failure_count===1?'failure':'failures'}`
+    : `${d.verified_apps}/${d.total_apps} apps verified · research pending`;
   const stats = $('stats');
   const cards = d.patterns ? [
     [`${d.patterns.verdicts.buildable_now || 0}/${d.patterns.total}`, 'Buildable now'],
@@ -97,7 +99,7 @@
     const p=d.patterns;
     $('pattern-detail').append(el('p',`${p.oauth2}/${p.total} support OAuth2; ${p.api_key}/${p.total} support API keys; ${p.both}/${p.total} support both.`));
     $('pattern-detail').append(el('p',`${p.access_summary.self_serve || 0}/${p.total} have free or trial self-serve access; ${p.access_summary.gated || 0}/${p.total} are gated. Most common blocker: ${label(p.top_blocker)} (${p.blockers[p.top_blocker] || 0}/${p.total}).`));
-    $('pattern-detail').append(el('p',`${p.easy_wins.length}/${p.total} are easy wins under the rubric. ${p.official_mcp.length}/${p.total} have an identified official MCP URL.`));
+    $('pattern-detail').append(el('p',`${p.easy_wins.length}/${p.total} are easy wins under the rubric. ${p.official_mcp.length}/${p.total} have an official-domain MCP URL candidate.`));
   } else $('pattern-detail').append(el('p','Final-pass analysis is pending.','empty'));
   const rows = d.results.map(x=>x.result);
   const unique = key => [...new Set(rows.map(r=>r[key]))].sort();
@@ -122,6 +124,7 @@
       td.append(el('p',r.one_liner || 'Research has not run for this app.'));
       if(r.blocker_note) td.append(el('p','Blocker: '+r.blocker_note));
       if(r.notes) td.append(el('p','Notes: '+r.notes));
+      if(record.deterministic_rules?.length) td.append(el('p','Code checks: '+record.deterministic_rules.join('; '),'small'));
       const list=el('ul',undefined,'evidence-list');
       (r.evidence||[]).forEach(e=>{const li=el('li'); const link=el('a',label(e.field)+' · '+e.url); link.href=e.url; link.target='_blank'; link.rel='noopener noreferrer'; li.append(link,el('span','“'+e.snippet+'”','snippet')); list.append(li);});
       td.append((r.evidence||[]).length ? list : el('p','No validated evidence yet.','small'));
@@ -133,17 +136,17 @@
   }
   render();
   const queue=$('human-queue');
-  const queueItem = x => `${x.name}: research failure: ${(x.research_failures||[]).join('; ') || 'none'}; verifier rejection: ${(x.verifier_rejections||[]).join('; ') || 'none'}`;
+  const queueItem = x => {const li=el('li'), details=el('details');const first=(x.research_failures||[])[0]||(x.verifier_rejections||[])[0]||'review needed';details.append(el('summary',`${x.name} · ${first.slice(0,115)}${first.length>115?'…':''}`));if(x.research_failures?.length)details.append(el('p','Research failure: '+x.research_failures.join('; ')));if(x.verifier_rejections?.length)details.append(el('p','Verifier rejection: '+x.verifier_rejections.join('; ')));li.append(details);return li;};
   if(d.human_queue_summary) queue.append(el('p',`${d.human_queue_summary.queued_count}/${d.human_queue_summary.sample_size} queued (${Math.round(d.human_queue_summary.queue_rate*100)}%).`));
-  if(d.human_queue.length){const ul=el('ul',undefined,'list');d.human_queue.forEach(x=>ul.append(el('li',queueItem(x))));queue.append(ul);}else queue.append(el('p',d.status==='complete'?'No apps were queued.':'Human review queue pending final pass.','empty'));
+  if(d.human_queue.length){const ul=el('ul',undefined,'list');d.human_queue.forEach(x=>ul.append(queueItem(x)));queue.append(ul);}else queue.append(el('p',d.status==='complete'?'No apps were queued.':'Human review queue pending final pass.','empty'));
   const accuracy=$('accuracy');
   if(d.accuracy){const table=el('table');const head=el('thead');const hr=el('tr');['Field','Pass 1','Pass 2','Pass 3'].forEach(t=>hr.append(el('th',t)));head.append(hr);table.append(head);const tb=el('tbody');const p=d.accuracy.passes;['auth_methods','self_serve','app_review_required','api_type','official_mcp','verdict','blocker','overall'].forEach(field=>{const tr=el('tr');tr.append(el('td',label(field)));['pass1','pass2','pass3'].forEach(key=>{const m=field==='overall'?p[key].overall:p[key].per_field[field];tr.append(el('td',`${m.correct}/${m.total} (${m.percent}%)`));});tb.append(tr);});table.append(tb);const wrap=el('div',undefined,'table-wrap');wrap.append(table);accuracy.append(wrap);accuracy.append(el('p',`Verdict accuracy delta, pass 1 → pass 3: ${p.pass3.verdict_accuracy.correct-p.pass1.verdict_accuracy.correct}/25 apps.`,'small'));accuracy.append(el('p',`Pass 3 all-field hits (${p.pass3.all_fields_correct_apps.length}/25): ${p.pass3.all_fields_correct_apps.join(', ') || 'none'}.`,'small'));}
-  else accuracy.append(el('p','Accuracy pending a blind, human-labelled gold.csv and three full pass outputs.','callout'));
+  else accuracy.append(el('p','Accuracy pending a complete, human-labelled blind gold.csv.','callout'));
   const misses=$('misses');
   if(d.misses.length){const details=el('details');const summary=el('summary',`Show all ${d.misses.length} field misses`);details.append(summary);const ul=el('ul',undefined,'list');d.misses.forEach(m=>ul.append(el('li',`${m.pass} · ${m.name} · ${m.field}: predicted ${m.prediction}, gold ${m.gold}. Cause: ${m.cause || 'awaiting human analysis'}.`)));details.append(ul);misses.append(details);}
   else misses.append(el('p',d.accuracy?'No field misses in the scored sample.':'Hits and misses pending scoring.','empty'));
   const failures=$('failures-body');
-  if(d.patterns){const u=d.patterns.unknown_counts;failures.append(el('p',`${u.auth_methods}/${d.patterns.total} unknown auth; ${u.self_serve}/${d.patterns.total} unknown access; ${u.api_type}/${d.patterns.total} unknown API type; ${u.could_not_identify}/${d.patterns.total} could not be identified; ${u.not_applicable}/${d.patterns.total} not applicable.`));if(d.human_queue.length){const ul=el('ul',undefined,'list');d.human_queue.forEach(x=>ul.append(el('li',queueItem(x))));failures.append(ul);}}
+  if(d.patterns){const u=d.patterns.unknown_counts;failures.append(el('p',`${u.auth_methods}/${d.patterns.total} unknown auth; ${u.self_serve}/${d.patterns.total} unknown access; ${u.api_type}/${d.patterns.total} unknown API type; ${u.could_not_identify}/${d.patterns.total} could not be identified; ${u.not_applicable}/${d.patterns.total} not applicable.`));failures.append(el('p',`${d.human_queue.length}/${d.total_apps} need human review; open each app in the agent section for research and verifier reasons.`));}
   else failures.append(el('p','Failure analysis waits for the final pass. The absence of a result is shown as pending in the matrix.','empty'));
   const links=$('links');
   if(d.repo_url){const a=el('a','Source repository');a.href=d.repo_url;links.append(a,el('br'));}else links.append(el('p','Repository URL pending publication.'));

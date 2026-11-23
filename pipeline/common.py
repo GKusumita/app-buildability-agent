@@ -42,8 +42,11 @@ def require_env(*names: str) -> None:
 
 
 def require_llm_key() -> None:
-    if not (os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")):
-        raise SystemExit("Set OPENROUTER_API_KEY or OPENAI_API_KEY in .env")
+    from pipeline.llm import model_for, provider_config
+    try:
+        provider_config(model_for())
+    except RuntimeError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 def write_immutable(path: Path, payload: dict) -> None:

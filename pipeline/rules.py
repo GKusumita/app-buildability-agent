@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import re
+from urllib.parse import urlparse
 
 from schema import APIType, AppInput, AppResult, Auth, Blocker, Evidence, SelfServe, Verdict
+from pipeline.research import official_domain
 
 
 def apply_rule2(app: AppInput, result: AppResult, pages: dict[str, str]) -> tuple[AppResult, str | None]:
@@ -49,3 +51,29 @@ def apply_rule2(app: AppInput, result: AppResult, pages: dict[str, str]) -> tupl
     copy.evidence.extend(Evidence(field=field, url=proof[0], snippet=proof[1])
                          for field in ("auth_methods", "self_serve", "api_type", "verdict"))
     return copy, "rubric_rule_2: official repository documents a local CLI; no hosted credentials apply"
+
+
+def constrain_official_mcp(app: AppInput, result: AppResult) -> tuple[AppResult, str | None]:
+    """An official MCP URL must identify MCP on the app's own domain or repository."""
+    url = result.official_mcp
+    if url in {"none", "unknown"}:
+        return result, None
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower()
+    location = (host + parsed.path).lower()
+    hint = app.hint.split()[0].lower()
+    if hint.startswith("github.com/"):
+        owner = hint.split("/", 2)[1]
+        own_source = host == "github.com" and parsed.path.lower().startswith("/" + owner + "/")
+    else:
+        domain = official_domain(app.hint) or ""
+        while any(domain.startswith(prefix + ".") for prefix in
+                  ("www", "docs", "doc", "developer", "developers", "api", "help", "support", "core", "open")):
+            domain = domain.split(".", 1)[1]
+        own_source = bool(domain) and (host == domain or host.endswith("." + domain))
+    if (parsed.scheme == "https" and own_source and "mcp" in location
+            and "marketplace" not in parsed.path.lower()):
+        return result, None
+    copy = result.model_copy(deep=True)
+    copy.official_mcp = "unknown"
+    return copy, "official_mcp: candidate URL lacked official MCP provenance"

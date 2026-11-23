@@ -1,0 +1,122 @@
+{
+  "stage": "pass3_verified",
+  "created_at": "2026-11-23T15:16:54.778296+00:00",
+  "records": [
+    {
+      "result": {
+        "id": 93,
+        "name": "Fathom",
+        "category": "AI Research and Media-native",
+        "one_liner": "AI meeting assistant with public API and integrations for meeting insights and CRM sync.",
+        "auth_methods": [
+          "oauth2",
+          "api_key"
+        ],
+        "self_serve": "trial_self_serve",
+        "app_review_required": "false",
+        "api_type": [
+          "rest"
+        ],
+        "api_breadth": "moderate",
+        "official_mcp": "https://api.fathom.ai/mcp",
+        "webhooks": "unknown",
+        "rate_limits": "60 calls per minute per user API keys",
+        "verdict": "buildable_now",
+        "blocker": "none",
+        "blocker_note": "",
+        "evidence": [
+          {
+            "field": "auth_methods",
+            "url": "https://help.fathom.video/en/articles/8368641",
+            "snippet": "* **API keys and access**: API keys are created at the user level. Your key can access meetings recorded by you or shared to your Team. Admin API keys do not grant access to other users’ unshared meetings."
+          },
+          {
+            "field": "auth_methods",
+            "url": "https://help.fathom.video/en/articles/448640",
+            "snippet": "Fathom uses the standard Salesforce OAuth 2.0 flow and requests four scopes:"
+          },
+          {
+            "field": "self_serve",
+            "url": "https://fathom.video/pricing",
+            "snippet": "Get 10 free seats for nonprofits"
+          },
+          {
+            "field": "api_type",
+            "url": "https://help.fathom.video/en/articles/8368641",
+            "snippet": "Fathom now has a public API that gives you developer‑friendly access to meeting insights so you can build workflows and integrations that connect Fathom with the rest of your tools."
+          },
+          {
+            "field": "verdict",
+            "url": "https://help.fathom.video/en/articles/8368641",
+            "snippet": "Fathom now has a public API that gives you developer‑friendly access to meeting insights so you can build workflows and integrations that connect Fathom with the rest of your tools."
+          },
+          {
+            "field": "verdict",
+            "url": "https://fathom.video/pricing",
+            "snippet": "Get 10 free seats for nonprofits"
+          },
+          {
+            "field": "api_type",
+            "url": "https://help.fathom.video/en/articles/448640",
+            "snippet": "Fathom uses the standard Salesforce OAuth 2.0 flow and requests four scopes:"
+          },
+          {
+            "field": "auth_methods",
+            "url": "https://help.fathom.video/en/articles/448640",
+            "snippet": "1. **Connection state –** In Fathom, confirm the Salesforce integration is connected and the OAuth token hasn't been revoked."
+          },
+          {
+            "field": "self_serve",
+            "url": "https://fathom.video/pricing",
+            "snippet": "Get 10 free seats for nonprofits"
+          },
+          {
+            "field": "api_type",
+            "url": "https://help.fathom.video/en/articles/8368641",
+            "snippet": "Fathom now has a public API that gives you developer‑friendly access to meeting insights so you can build workflows and integrations that connect Fathom with the rest of your tools."
+          },
+          {
+            "field": "verdict",
+            "url": "https://help.fathom.video/en/articles/8368641",
+            "snippet": "Fathom now has a public API that gives you developer‑friendly access to meeting insights so you can build workflows and integrations that connect Fathom with the rest of your tools."
+          },
+          {
+            "field": "verdict",
+            "url": "https://fathom.video/pricing",
+            "snippet": "Get 10 free seats for nonprofits"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Fathom provides a public REST API with user-level API keys and OAuth2 for integrations. The API allows access to meeting insights, summaries, and action items. Rate limits are 60 calls per minute per user. The pricing page shows free and"
+      },
+      "queries": [
+        "Fathom fathom.video API authentication",
+        "Fathom fathom.video API getting started get API key credentials",
+        "Fathom API pricing access requirements partner program",
+        "Fathom MCP server official"
+      ],
+      "pages": [
+        "https://help.fathom.video/en/articles/448640",
+        "https://fathom.video/pricing",
+        "https://help.fathom.video/en/articles/8368641",
+        "https://developers.fathom.ai/mcp-docs",
+        "https://help.fathom.video/en/articles/276608"
+      ],
+      "usage": {
+        "promptTokenCount": 7433,
+        "candidatesTokenCount": 217,
+        "totalTokenCount": 7650,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 7433
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "errors": [],
+      "evidence_invalid": [],
+      "deterministic_rules": []
+    }
+  ]
+}

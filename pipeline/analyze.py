@@ -63,11 +63,13 @@ def compute(results: list[AppResult]) -> dict:
 
 
 def main() -> None:
-    source = ROOT / "data" / "pass3.json"
+    final = ROOT / "data" / "pass3_final.json"
+    source = final if final.exists() else ROOT / "data" / "pass3.json"
     if not source.exists():
         raise SystemExit("Run full pass3 first")
     results = [AppResult.model_validate(row["result"]) for row in read_pass(source)["records"]]
-    write_immutable(ROOT / "data" / "patterns.json", compute(results))
+    output = ROOT / "data" / ("patterns_final.json" if source == final else "patterns.json")
+    write_immutable(output, compute(results))
     print(f"Computed patterns from {len(results)} final rows")
 
 

@@ -1,4 +1,4 @@
-"""Strict JSON output via OpenRouter or OpenAI, with call logs."""
+"""Structured JSON output via Gemini, OpenRouter, or OpenAI, with call logs."""
 from __future__ import annotations
 
 import asyncio
@@ -44,14 +44,37 @@ def strict_schema(model: type[BaseModel]) -> dict:
     return clean(schema)
 
 
+def model_for(*, verify: bool = False) -> str:
+    generic = os.getenv("LLM_VERIFY_MODEL" if verify else "LLM_MODEL")
+    if generic:
+        return generic
+    if os.getenv("LLM_PROVIDER", "").lower() == "gemini":
+        return "gemini-3.8-flash" if verify else "gemini-3.5-flash-lite"
+    return os.getenv("OPENAI_VERIFY_MODEL" if verify else "OPENAI_MODEL",
+                     "gpt-4.1" if verify else "gpt-4.1-mini")
+
+
 def provider_config(model: str) -> tuple[str, str, str, str]:
+    selected = os.getenv("LLM_PROVIDER", "auto").lower()
+    if selected not in {"auto", "gemini", "openrouter", "openai"}:
+        raise RuntimeError("LLM_PROVIDER must be auto, gemini, openrouter, or openai")
+    if selected == "gemini" or (selected == "auto" and not
+            (os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY"))
+            and os.getenv("GEMINI_API_KEY")):
+        key = os.getenv("GEMINI_API_KEY")
+        if not key:
+            raise RuntimeError("Set GEMINI_API_KEY in .env for LLM_PROVIDER=gemini")
+        return ("gemini", f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+                key, model)
     router_key = os.getenv("OPENROUTER_API_KEY")
-    if router_key:
+    if router_key and selected in {"auto", "openrouter"}:
         routed_model = "openai/" + model if model.startswith("gpt-") else model
         return "openrouter", "https://openrouter.ai/api/v1/chat/completions", router_key, routed_model
+    if selected == "openrouter":
+        raise RuntimeError("Set OPENROUTER_API_KEY in .env for LLM_PROVIDER=openrouter")
     key = os.getenv("OPENAI_API_KEY")
     if not key:
-        raise RuntimeError("Set OPENROUTER_API_KEY or OPENAI_API_KEY")
+        raise RuntimeError("Set GEMINI_API_KEY, OPENROUTER_API_KEY, or OPENAI_API_KEY in .env")
     return "openai", "https://api.openai.com/v1/responses", key, model.removeprefix("openai/")
 
 
@@ -61,30 +84,45 @@ async def structured_call(client: httpx.AsyncClient, model: str, prompt: str,
     prompt_hash = hashlib.sha256(prompt.encode()).hexdigest()
     format_schema = {"name": output_model.__name__.lower(), "strict": True,
                      "schema": strict_schema(output_model)}
-    if provider == "openrouter":
+    if provider == "gemini":
+        body = {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0,
+                                     "responseMimeType": "application/json",
+                                     "responseJsonSchema": strict_schema(output_model)}}
+        headers = {"x-goog-api-key": key}
+    elif provider == "openrouter":
         body = {"model": actual_model, "temperature": 0,
                 "messages": [{"role": "user", "content": prompt}],
                 "response_format": {"type": "json_schema", "json_schema": format_schema},
                 "provider": {"require_parameters": True}}
+        headers = {"Authorization": f"Bearer {key}"}
     else:
         body = {"model": actual_model, "temperature": 0, "store": False,
                 "input": [{"role": "user", "content": prompt}],
                 "text": {"format": {"type": "json_schema", **format_schema}}}
+        headers = {"Authorization": f"Bearer {key}"}
     usage: dict = {}
     error = ""
     attempts = 0
     try:
         for attempts in range(1, 4):
-            response = await client.post(endpoint, json=body,
-                                         headers={"Authorization": f"Bearer {key}"}, timeout=120)
+            response = await client.post(endpoint, json=body, headers=headers, timeout=120)
             if response.status_code in {429, 500, 502, 503, 504} and attempts < 3:
                 await asyncio.sleep(2 ** attempts)
                 continue
             response.raise_for_status()
             break
         data = response.json()
-        usage = data.get("usage", {})
-        if provider == "openrouter":
+        usage = data.get("usageMetadata", {}) if provider == "gemini" else data.get("usage", {})
+        if provider == "gemini":
+            candidates = data.get("candidates", [])
+            if len(candidates) != 1 or candidates[0].get("finishReason") != "STOP":
+                raise RuntimeError("Gemini returned no complete structured response")
+            parts = candidates[0].get("content", {}).get("parts", [])
+            texts = [part["text"] for part in parts if isinstance(part.get("text"), str)
+                     and not part.get("thought")]
+            output_text = "".join(texts) if texts else None
+        elif provider == "openrouter":
             choices = data.get("choices", [])
             if len(choices) != 1 or choices[0].get("finish_reason") != "stop":
                 raise RuntimeError("OpenRouter returned no complete structured response")

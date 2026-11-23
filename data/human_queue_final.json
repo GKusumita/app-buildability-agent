@@ -1,0 +1,793 @@
+{
+  "sample_size": 100,
+  "queued_count": 44,
+  "queue_rate": 0.44,
+  "apps": [
+    {
+      "id": 1,
+      "name": "Salesforce",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_with_outreach/app_review from other fields; previous buildable_now/none needs human review"
+      ],
+      "unknown_fields": [
+        "official_mcp",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 2,
+      "name": "HubSpot",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no explicit evidence in the cited or quoted text that production use of the MCP server or core API requires a platform app review. The documentation describes creating MCP connectors and using OAuth, but does not mention a mandatory app review or approval process for production use. The only mention of review is a user prompt to confirm actions, not a platform review. Therefore, there is insufficient evidence to support 'app_review_required=true'.",
+        "consistency: buildable_now lacks known public API, self-serve access, and review status"
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 7,
+      "name": "Zoho CRM",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no explicit evidence in the cited or provided documentation that production use of the MCP servers or the underlying API requires a platform app review. The documentation describes self-serve setup and OAuth authentication, but does not address whether Zoho requires an app review for production use of MCP servers.",
+        "verdict: insufficient_evidence: The verdict 'buildable_now' requires sufficient evidence that there is a documented public API (or MCP server), free or trial self-serve credentials, and no required app review for production use. While self-serve and OAuth are supported, there is insufficient evidence regarding app review requirements for MCP servers, so the verdict cannot be fully supported."
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 8,
+      "name": "Close",
+      "research_failures": [
+        "official_mcp: URL was not returned by search/extract"
+      ],
+      "verifier_rejections": [],
+      "unknown_fields": [
+        "official_mcp"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 9,
+      "name": "Copper",
+      "research_failures": [
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: https://developer.copper.com/introduction/authentication.html; verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_now/none from other fields; previous could_not_identify/none needs human review",
+        "verdict: contradicted: The correct verdict should be 'buildable_with_outreach' and 'partner_gated' because OAuth2.0 access (required for third-party/partner integrations) is not self-serve and requires contacting Copper to register your application. The claim of 'buildable_now' with 'free_self_serve' is contradicted by the evidence."
+      ],
+      "unknown_fields": [
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 10,
+      "name": "DealCloud",
+      "research_failures": [
+        "official_mcp: URL was not returned by search/extract",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no evidence in the provided documentation that production use of the core DealCloud API requires a platform app review. The docs describe credential self-service and API enablement by admins, but do not mention any app review or approval process for API integrations outside of optional marketplace or app store distribution.",
+        "consistency: buildable_now is invalid while self_serve or auth_methods is unknown",
+        "self_serve: insufficient_evidence: While the documentation describes how to connect to the API and mentions a default MCP server available 'out-of-the-box,' it also states that a specific license ('DealCloud with Celeste') and user permissions are required. There is no clear evidence that a free trial or self-serve credential issuance is available without contacting sales or having an existing license. The Capterra page explicitly says 'Free trial not available.'"
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "app_review_required",
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 12,
+      "name": "Intercom",
+      "research_failures": [
+        "api_type: retry research failed: retry evidence_invalid: api_type: evidence_invalid: https://developers.intercom.com/docs/build-an-integration/learn-more/authentication; api_type: evidence_invalid: https://developers.intercom.com/docs/build-an-integration/learn-more/authentication; api_type: evidence_invalid: no valid citation",
+        "unresolved research field: api_type"
+      ],
+      "verifier_rejections": [
+        "api_type: insufficient_evidence: The documentation and evidence provided confirm a REST API (via Bearer token and OAuth), but there is no explicit mention of a GraphQL API. The MCP protocol is not GraphQL; it is a separate protocol. Therefore, there is insufficient evidence for GraphQL."
+      ],
+      "unknown_fields": [
+        "api_type"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 14,
+      "name": "Front",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "unresolved research field: verdict",
+        "verdict: evidence_invalid: https://community.front.com/api-news-updates-40/create-application-channels-via-the-core-api-3988"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: No evidence in the cited or provided text confirms that production use of the core API requires app review. The cited OAuth evidence only describes self-serve app creation, not review requirements.",
+        "consistency: buildable_now lacks known public API, self-serve access, and review status"
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 15,
+      "name": "Pylon",
+      "research_failures": [
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: buildable_now is invalid while self_serve or auth_methods is unknown",
+        "self_serve: insufficient_evidence: The documentation confirms that Admin users can generate API tokens in the dashboard, but it does not specify whether there is a free trial, free tier, or if payment is required before generating a token. There is no explicit evidence of trial_self_serve or any free access."
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 19,
+      "name": "Gorgias",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_with_outreach/app_review from other fields; previous buildable_now/none needs human review"
+      ],
+      "unknown_fields": [
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 20,
+      "name": "Gladly",
+      "research_failures": [
+        "self_serve: retry research failed: retry evidence_invalid: self_serve: evidence_invalid: https://developer.gladly.com/rest; self_serve: evidence_invalid: https://help.gladly.com/developer-tutorials/docs/setup-and-testing; self_serve: evidence_invalid: https://help.gladly.com/developer-tutorials/docs/setup-and-testing; self_serve: evidence_invalid: https://help.gladly.com/developer-tutorials/docs/setup-and-testing; self_serve: evidence_invalid: no valid citation",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no evidence in the cited documentation that Gladly requires a separate app review process for production use of its core API. The documentation describes self-serve API token creation and permissions, but does not mention any review or approval step for API integrations beyond user permission assignment.",
+        "self_serve: unsupported: The documentation (https://help.gladly.com/developer-tutorials/docs/setup-and-testing) states: 'If you do not have a sandbox environment and are interested in purchasing one, please contact your Gladly CSM or Gladly Support team.' This indicates that access to a sandbox (and thus API credentials) is not self-serve, but requires contacting sales/support and likely a purchase. There is no evidence of a free or trial self-serve signup.",
+        "verdict: contradicted: The rubric requires 'trial_self_serve' for 'buildable_now', but the evidence shows that a sandbox (and thus API credentials) requires contacting sales/support and possibly a purchase. This matches rubric rule 5 ('Partnership, contact sales, admin approval, or enterprise plan for API access: buildable_with_outreach'), not rule 7. Therefore, 'buildable_now' is contradicted by the evidence."
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "app_review_required",
+        "official_mcp",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 21,
+      "name": "Slack",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_with_outreach/app_review from other fields; previous buildable_now/none needs human review"
+      ],
+      "unknown_fields": [
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 23,
+      "name": "Zoho Cliq",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no explicit evidence in the cited documentation or page text that confirms or denies whether a production app review is required for using the core API. The OAuth flow appears self-serve, but absence of mention does not confirm lack of review for production use.",
+        "verdict: insufficient_evidence: The rubric requires confirmation that there is a documented public API, free or trial self-serve credentials, and no production app review requirement. While the first two are supported, there is insufficient evidence regarding the app review requirement, so 'buildable_now' is not fully supported."
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 24,
+      "name": "Lark (Larksuite)",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no explicit evidence in the cited documentation about whether production use of the core API requires app review or approval. The documentation describes credential creation and API access but does not clarify if review is required for production use.",
+        "verdict: insufficient_evidence: The rubric requires sufficient evidence that production use does not require app review for a 'buildable_now' verdict. Since there is insufficient evidence regarding app review requirements, the correct verdict should be 'insufficient_evidence', not 'buildable_now'."
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 25,
+      "name": "Pumble",
+      "research_failures": [
+        "auth_methods: retry research failed: retry evidence_invalid: auth_methods: evidence_invalid: https://pumble.com/learn/pumble/ai-automation-guide; auth_methods: evidence_invalid: no valid citation",
+        "unresolved research field: auth_methods",
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "auth_methods: unsupported: The evidence supports 'bearer_token' (API key in HTTP header) as an authentication method for the API, but there is no evidence supporting OAuth2 for API access. The mention of OAuth2 on the pricing page refers to SSO for user login, not API authentication.",
+        "consistency: buildable_now is invalid while self_serve or auth_methods is unknown"
+      ],
+      "unknown_fields": [
+        "auth_methods",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 26,
+      "name": "Discord",
+      "research_failures": [
+        "api_type: retry research failed: retry evidence_invalid: api_type: evidence_invalid: https://docs.discord.com/developers/reference; api_type: evidence_invalid: no valid citation",
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "unresolved research field: api_type",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: https://www.activepieces.com/blog/discord-api-rate-limits-errors-and-auth-2026-guide; verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "api_type: insufficient_evidence: The documentation references a REST API (HTTP API) but does not mention GraphQL. Only REST is confirmed.",
+        "app_review_required: insufficient_evidence: The provided evidence does not state that production use of the core API requires app review. It mentions user approval for installing apps, but not a Discord platform review for production use.",
+        "verdict: contradicted: The rubric requires 'buildable_with_outreach' and 'app_review_required=true' if production use of the core API requires platform review. Since there is insufficient evidence for app review being required, the correct verdict should be 'buildable_now' only if all other fields are supported. However, since 'api_type' is not fully supported (GraphQL is not confirmed), the 'buildable_now' verdict is not fully supported."
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "api_type",
+        "official_mcp",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 28,
+      "name": "WhatsApp Business",
+      "research_failures": [
+        "auth_methods: retry research failed: retry evidence_invalid: auth_methods: evidence_invalid: https://developers.facebook.com/documentation/business-messaging/whatsapp/about-the-platform; auth_methods: evidence_invalid: no valid citation",
+        "unresolved research field: auth_methods"
+      ],
+      "verifier_rejections": [
+        "auth_methods: unsupported: The documentation states: 'Authentication uses OAuth (not 2.0) access tokens,' and describes the use of system user access tokens, which are not OAuth2. Therefore, the claim that 'auth_methods' includes 'oauth2' is unsupported."
+      ],
+      "unknown_fields": [
+        "auth_methods",
+        "official_mcp"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 31,
+      "name": "Google Ads",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_with_outreach/app_review from other fields; previous buildable_now/none needs human review"
+      ],
+      "unknown_fields": [
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 32,
+      "name": "Meta Ads",
+      "research_failures": [
+        "official_mcp: URL was not returned by search/extract"
+      ],
+      "verifier_rejections": [],
+      "unknown_fields": [
+        "official_mcp",
+        "webhooks"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 36,
+      "name": "Klaviyo",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_with_outreach/app_review from other fields; previous buildable_now/none needs human review"
+      ],
+      "unknown_fields": [
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 39,
+      "name": "Threads (Meta)",
+      "research_failures": [],
+      "verifier_rejections": [
+        "consistency: Re-derived blocker from buildable_with_outreach/none to buildable_with_outreach/app_review"
+      ],
+      "unknown_fields": [
+        "official_mcp"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 41,
+      "name": "Shopify",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: A claim with an unknown value cannot be supported",
+        "consistency: buildable_now lacks known public API, self-serve access, and review status"
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 43,
+      "name": "BigCommerce",
+      "research_failures": [
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_with_outreach/app_review from other fields; previous could_not_identify/none needs human review",
+        "verdict: contradicted: According to the rubric, if production use of the core API requires platform app review, the correct verdict is 'buildable_with_outreach' and not 'buildable_now'. The evidence shows that app review is required for production use of app-level APIs, so the verdict does not follow the rubric."
+      ],
+      "unknown_fields": [
+        "official_mcp",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 45,
+      "name": "Magento (Adobe Commerce)",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "self_serve: retry research failed: retry evidence_invalid: self_serve: evidence_invalid: https://developer.adobe.com/commerce/webapi/rest/authentication; self_serve: evidence_invalid: https://developer.adobe.com/commerce/webapi/rest/authentication; self_serve: evidence_invalid: https://developer.adobe.com/commerce/webapi/get-started/authentication/gs-authentication-token; self_serve: evidence_invalid: no valid citation",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no explicit mention in the cited evidence or page text that production use of the core API requires an app review. The documentation discusses authentication and prerequisites but does not mention an app review process for production use.",
+        "self_serve: insufficient_evidence: There is no direct evidence in the cited sources that self-serve (trial or otherwise) credential creation is available. The documentation references the need for an Adobe Commerce license and Adobe Developer Console access, but does not clarify if these are available via self-serve signup or require sales contact. The pricing page (https://business.adobe.com/products/commerce/pricing.html) only offers 'get customized pricing', suggesting a sales process, but this is not definitive for API credential access.",
+        "verdict: contradicted: The claim 'buildable_now' requires documented public API and free or trial self-serve credentials. The evidence shows Adobe Commerce requires direct sales engagement and does not offer self-serve production credentials, contradicting the 'buildable_now' verdict. The correct rubric outcome is 'buildable_with_outreach'."
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "app_review_required",
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 46,
+      "name": "Squarespace",
+      "research_failures": [],
+      "verifier_rejections": [
+        "consistency: Re-derived blocker from buildable_with_outreach/none to buildable_with_outreach/app_review"
+      ],
+      "unknown_fields": [
+        "rate_limits"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 47,
+      "name": "Ecwid",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: None of the cited sources provide clear evidence about whether production use of the core API requires an app review. While there are references to creating apps and submitting app ideas, there is no explicit statement about app review being required for production API use.",
+        "consistency: buildable_now lacks known public API, self-serve access, and review status"
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "official_mcp",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 49,
+      "name": "Amazon Selling Partner",
+      "research_failures": [
+        "self_serve: retry research failed: retry evidence_invalid: self_serve: evidence_invalid: https://developer-docs.amazon.com/sp-api/docs/authorizing-selling-partner-api-applications; self_serve: evidence_invalid: https://sellercentral.amazon.in/seller-forums/discussions/t/4193f854-bf71-4e3b-8a8d-aad1af8bd989; self_serve: evidence_invalid: https://developer-docs.amazon.com/sp-api/docs/authorizing-selling-partner-api-applications; self_serve: evidence_invalid: https://www.youtube.com/watch?v=BGmx-9C1aoM; self_serve: evidence_invalid: no valid citation",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "self_serve: unsupported: The documentation describes a self-authorization process for private apps, but for public apps (which use OAuth2), production use requires app registration and review by Amazon. There is no evidence that free self-serve production credentials are available without app review. The rubric requires 'buildable_with_outreach, app_review' if production use requires platform app review.",
+        "verdict: unsupported: The correct rubric outcome is 'buildable_with_outreach' and 'app_review' because production use of the core API requires app review. The claim 'buildable_now' is only supported if free self-serve production credentials are available, which is not the case here."
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "official_mcp",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 50,
+      "name": "fanbasis",
+      "research_failures": [
+        "unresolved research field: api_type",
+        "unresolved research field: auth_methods"
+      ],
+      "verifier_rejections": [
+        "api_type: unsupported: The claim is 'rest' and 'sdk_only'. The cited evidence from https://autodiscover.fanbasis.com mentions 'APIs and SDKs', but does not specify REST or SDK-only. The snippet from https://docs.alternativepayments.io/web-sdk/authentication is about a different service (Alternative Payments), not FanBasis/Commas. No direct evidence in the provided FanBasis/Commas documentation or integration guides confirms the API is REST or SDK-only. Integration instructions (Tarvent, Emergent) reference API keys and Zapier, but do not specify the API protocol. Therefore, there is insufficient evidence to support either 'rest' or 'sdk_only'.",
+        "auth_methods: insufficient_evidence: The cited evidence (https://www.fanbasis.com/auth/setup/signup) and the provided page text do not describe or document any authentication methods (such as API keys, OAuth, JWT, etc.) for accessing a FanBasis or Commas API. The snippet only discusses payment methods for end users, not developer authentication. No documentation or technical details about API authentication are present in the supplied evidence."
+      ],
+      "unknown_fields": [
+        "auth_methods",
+        "api_type",
+        "official_mcp",
+        "webhooks",
+        "rate_limits"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 57,
+      "name": "Bright Data",
+      "research_failures": [
+        "Grounded call: model changed identity for app 57",
+        "api_type: retry research failed: retry evidence_invalid: api_type: evidence_invalid: https://docs.brightdata.com/api-reference/authentication; api_type: evidence_invalid: https://docs.brightdata.com/api-reference/authentication; api_type: evidence_invalid: https://docs.brightdata.com/api-reference/rest-api/scraper/asynchronous-requests; api_type: evidence_invalid: https://docs.brightdata.com/api-reference/rest-api/serp/serp-api; api_type: evidence_invalid: no valid citation",
+        "auth_methods: retry research failed: retry evidence_invalid: auth_methods: evidence_invalid: https://docs.brightdata.com/api-reference/authentication; auth_methods: evidence_invalid: no valid citation",
+        "self_serve: retry research failed: retry evidence_invalid: self_serve: evidence_invalid: https://docs.brightdata.com/general/account/billing-and-pricing/free-tier; self_serve: evidence_invalid: https://docs.brightdata.com/api-reference/authentication; self_serve: evidence_invalid: https://brightdata.com/pricing/mcp-server; self_serve: evidence_invalid: https://app.stationx.net/articles/bright-data-review; self_serve: evidence_invalid: no valid citation",
+        "unresolved research field: api_type",
+        "unresolved research field: auth_methods",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "api_type: insufficient_evidence: A claim with an unknown value cannot be supported",
+        "auth_methods: insufficient_evidence: A claim with an unknown value cannot be supported",
+        "consistency: buildable_now is invalid while self_serve or auth_methods is unknown",
+        "self_serve: insufficient_evidence: A claim with an unknown value cannot be supported"
+      ],
+      "unknown_fields": [
+        "auth_methods",
+        "self_serve",
+        "app_review_required",
+        "api_type",
+        "api_breadth",
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 58,
+      "name": "Sherlock",
+      "research_failures": [
+        "self_serve: evidence_invalid: no valid citation",
+        "self_serve: retry research failed: retry evidence_invalid: self_serve: evidence_invalid: https://github.com/sherlock-project/sherlock; self_serve: evidence_invalid: https://github.com/bellingcat/toolkit/blob/main/gitbook/tools/sherlock/README.md; self_serve: evidence_invalid: https://github.com/Burnsedia/sherlock-mcp; self_serve: evidence_invalid: no valid citation",
+        "unresolved research field: self_serve"
+      ],
+      "verifier_rejections": [
+        "self_serve: insufficient_evidence: A claim with an unknown value cannot be supported"
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "official_mcp",
+        "webhooks",
+        "rate_limits"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 64,
+      "name": "Cloudflare",
+      "research_failures": [
+        "auth_methods: retry research failed: retry evidence_invalid: auth_methods: evidence_invalid: https://developers.cloudflare.com/api; auth_methods: evidence_invalid: https://developers.cloudflare.com/fundamentals/api/get-started; auth_methods: evidence_invalid: https://developers.cloudflare.com/fundamentals/api/get-started/keys; auth_methods: evidence_invalid: https://developers.cloudflare.com/api-shield/security/vulnerability-scanner/index.md; auth_methods: evidence_invalid: https://developers.cloudflare.com/analytics/graphql-api/getting-started/authentication; auth_methods: evidence_invalid: https://developers.cloudflare.com/api; auth_methods: evidence_invalid: no valid citation",
+        "unresolved research field: auth_methods",
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "auth_methods: unsupported: The cited evidence and page text confirm support for API key and bearer token (API token) authentication, but there is no mention or documentation of HTTP Basic authentication being supported for the Cloudflare API.",
+        "consistency: buildable_now is invalid while self_serve or auth_methods is unknown"
+      ],
+      "unknown_fields": [
+        "auth_methods",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 66,
+      "name": "Neo4j",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives blocked/no_public_api from other fields; previous buildable_now/none needs human review"
+      ],
+      "unknown_fields": [
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 70,
+      "name": "Sentry",
+      "research_failures": [
+        "official_mcp: URL was not returned by search/extract"
+      ],
+      "verifier_rejections": [],
+      "unknown_fields": [
+        "official_mcp",
+        "webhooks",
+        "rate_limits"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 76,
+      "name": "Monday.com",
+      "research_failures": [
+        "auth_methods: retry research failed: retry evidence_invalid: auth_methods: evidence_invalid: https://developer.monday.com/api-reference/docs/authentication; auth_methods: evidence_invalid: https://developer.monday.com/apps/docs/choosing-auth; auth_methods: evidence_invalid: https://developer.monday.com/apps/docs/choosing-auth; auth_methods: evidence_invalid: https://developer.monday.com/apps/docs/choosing-auth; auth_methods: evidence_invalid: no valid citation",
+        "unresolved research field: auth_methods",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: https://pipeline.zoominfo.com/sales/monday-com-api; verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "auth_methods: unsupported: The documentation supports 'api_key' (personal API token) and 'oauth2' (OAuth access token) as authentication methods. JWT is mentioned only as a short-lived token for seamless authentication in integration recipes, not as a general API authentication method. There is no evidence that JWT is a supported general authentication method for the core API.",
+        "consistency: Rubric derives buildable_now/none from other fields; previous could_not_identify/none needs human review",
+        "verdict: contradicted: The claim 'buildable_now' requires all fields to be supported. However, 'auth_methods' includes JWT (unsupported) and 'api_type' includes REST (unsupported). Therefore, the verdict does not follow the rubric."
+      ],
+      "unknown_fields": [
+        "auth_methods",
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 77,
+      "name": "ClickUp",
+      "research_failures": [
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_now/none from other fields; previous could_not_identify/none needs human review",
+        "verdict: contradicted: The claim lists both 'oauth2' and 'api_key' as supported auth methods, but the MCP Server only supports OAuth2. Since 'api_key' is not supported for the MCP API, the claim does not fully meet the requirements for 'buildable_now' under the rubric."
+      ],
+      "unknown_fields": [
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 79,
+      "name": "Smartsheet",
+      "research_failures": [],
+      "verifier_rejections": [
+        "consistency: Re-derived blocker from buildable_with_outreach/none to buildable_with_outreach/app_review"
+      ],
+      "unknown_fields": [
+        "webhooks",
+        "rate_limits"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 82,
+      "name": "Plaid",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_with_outreach/app_review from other fields; previous buildable_now/none needs human review"
+      ],
+      "unknown_fields": [
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 83,
+      "name": "Binance",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no information in the cited documentation about whether production use of the core API requires an app review or approval process.",
+        "consistency: buildable_now lacks known public API, self-serve access, and review status"
+      ],
+      "unknown_fields": [
+        "app_review_required",
+        "official_mcp",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 85,
+      "name": "iPayX",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives blocked/no_public_api from other fields; previous buildable_now/none needs human review"
+      ],
+      "unknown_fields": [
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 87,
+      "name": "Xero",
+      "research_failures": [],
+      "verifier_rejections": [
+        "consistency: Re-derived blocker from buildable_with_outreach/none to buildable_with_outreach/app_review"
+      ],
+      "unknown_fields": [],
+      "confidence": "low"
+    },
+    {
+      "id": 90,
+      "name": "PitchBook",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "auth_methods: retry research failed: retry evidence_invalid: auth_methods: evidence_invalid: https://developers.frontegg.com/agen-for-work/connectors/marketplace/pitchbook; auth_methods: evidence_invalid: https://scrapegraphai.com/blog/pitchbook-api; auth_methods: evidence_invalid: https://pipeline.zoominfo.com/sales/pitchbook-api-review; auth_methods: evidence_invalid: no valid citation",
+        "unresolved research field: auth_methods"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no evidence in the provided documentation about whether production use of the core API requires an app review. The documentation only discusses contacting sales/support and SSO setup, not app review processes.",
+        "auth_methods: unsupported: The evidence and page text only mention authentication via Single Sign-On (SSO) and do not mention api_key, oauth2, or jwt as supported authentication methods. The API documentation states that access is established through an API key or authentication token, but does not specify oauth2 or jwt. SSO is described in detail for the Premium Connector and platform access, not for the API.",
+        "consistency: Re-derived blocker from buildable_with_outreach/paid_only to buildable_with_outreach/enterprise_only"
+      ],
+      "unknown_fields": [
+        "auth_methods",
+        "app_review_required",
+        "official_mcp",
+        "webhooks",
+        "rate_limits"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 91,
+      "name": "NotebookLM",
+      "research_failures": [
+        "unresolved research field: verdict"
+      ],
+      "verifier_rejections": [
+        "consistency: Rubric derives buildable_now/none from other fields; previous buildable_with_outreach/enterprise_only needs human review"
+      ],
+      "unknown_fields": [
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 92,
+      "name": "Otter AI",
+      "research_failures": [
+        "app_review_required: retry research failed: app_review_required evidence_invalid",
+        "self_serve: retry research failed: retry evidence_invalid: self_serve: evidence_invalid: https://help.otter.ai/hc/en-us/articles/35287607569687-Otter-MCP-Server; self_serve: evidence_invalid: https://help.otter.ai/hc/en-us/articles/36130822688279-Otter-ai-Public-API; self_serve: evidence_invalid: https://otter.ai/pricing; self_serve: evidence_invalid: https://help.otter.ai/hc/en-us/articles/35287607569687-Otter-MCP-Server; self_serve: evidence_invalid: no valid citation",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: retry evidence_invalid: verdict: evidence_invalid: no valid citation"
+      ],
+      "verifier_rejections": [
+        "app_review_required: insufficient_evidence: There is no explicit mention of an app review requirement for production use of the core API. However, since access is not self-serve and requires contacting support or an account manager, this field cannot be confidently determined from the evidence.",
+        "self_serve: unsupported: The Public API is only available for Enterprise workspaces and requires contacting an account manager if the feature is not visible (https://help.otter.ai/hc/en-us/articles/36130822688279-Otter-ai-Public-API: 'If you do not see this feature for your workspace, contact your Otter account manager.'). The MCP API requires contacting support for setup and does not provide public API keys (https://help.otter.ai/hc/en-us/articles/35287607569687-Otter-MCP-Server: 'We currently do not have a public API key at this time. Contact our Otter Support team for help setting up Otter MCP with your AI application.'). There is no evidence of trial or free self-serve credential issuance.",
+        "verdict: contradicted: The rubric states that if API access requires partnership, contact with sales, or an enterprise plan, the correct verdict is 'buildable_with_outreach' and not 'buildable_now.' The evidence shows that both the Public API and MCP require enterprise access or contacting support, so 'buildable_now' is contradicted."
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "app_review_required",
+        "verdict"
+      ],
+      "confidence": "low"
+    },
+    {
+      "id": 97,
+      "name": "higgsfield",
+      "research_failures": [
+        "api_type: retry research failed: retry evidence_invalid: api_type: evidence_invalid: https://higgsfield.ai/creator-hub/help-center/getting-started/what-is-the-higgsfield-api; api_type: evidence_invalid: no valid citation",
+        "unresolved research field: api_type",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      ],
+      "verifier_rejections": [
+        "Verifier call failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "api_type: insufficient_evidence: Verifier failed",
+        "self_serve: contradicted: The claim states 'free_self_serve', but documentation and guides explicitly confirm there is no permanent free tier or free monthly allowance; it is pay-as-you-go from the first request requiring a prepaid balance and payment method.",
+        "verdict: insufficient_evidence: Verifier failed"
+      ],
+      "unknown_fields": [
+        "self_serve",
+        "api_type",
+        "official_mcp",
+        "webhooks",
+        "verdict"
+      ],
+      "confidence": "low"
+    }
+  ]
+}

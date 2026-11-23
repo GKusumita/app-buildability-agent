@@ -8,7 +8,7 @@ The implementation is complete locally. The live API passes, human gold labels, 
 
 ## Prerequisites and setup
 
-- Python 3.11, an OpenRouter **or** OpenAI API key, and a Tavily API key.
+- Python 3.11, a Gemini, OpenRouter, **or** OpenAI API key, and a Tavily API key.
 - Optional: a connected Google Sheets account in Composio, a target spreadsheet ID, and GitHub Pages for publication.
 
 ```powershell
@@ -18,7 +18,7 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Fill `OPENROUTER_API_KEY` **or** `OPENAI_API_KEY`, plus `TAVILY_API_KEY`, in `.env`. OpenRouter takes precedence if both are present. Do not commit `.env`. The defaults use `gpt-4.1-mini` for answering and a different model, `gpt-4.1`, for verification. With OpenRouter, unprefixed `gpt-*` names are mapped to `openai/gpt-*`; other provider/model slugs are passed through. Both routes use temperature 0 and strict JSON-schema output. OpenRouter also requires a provider endpoint that supports all supplied parameters. If the defaults are unavailable, set `OPENAI_MODEL` and `OPENAI_VERIFY_MODEL` to available structured-output models. Every model call logs the prompt SHA-256, provider, model, token usage, and error to `logs/llm.jsonl`. See [OpenRouter structured outputs](https://openrouter.ai/blog/tutorials/structured-output-llm/) and the [OpenAI Responses schema guide](https://developers.openai.com/api/docs/guides/structured-outputs).
+Fill `TAVILY_API_KEY` and one LLM key in `.env`; do not commit it. Set `LLM_PROVIDER=gemini`, `openrouter`, or `openai` to choose explicitly. With `auto`, OpenRouter takes precedence over OpenAI, then Gemini. Gemini uses Google's native [structured-output API](https://aistudio.google.com/docs/structured-output) with `GEMINI_API_KEY`, defaulting to `gemini-3.5-flash-lite` for research and `gemini-3.8-flash` for verification. Override these with `LLM_MODEL` and `LLM_VERIFY_MODEL`. OpenRouter/OpenAI retain their `OPENAI_MODEL` and `OPENAI_VERIFY_MODEL` defaults (`gpt-4.1-mini` and `gpt-4.1`). With OpenRouter, unprefixed `gpt-*` names are mapped to `openai/gpt-*`. Every call requests temperature 0 and structured JSON; Google [notes that temperature is ignored by Gemini 3.6 Flash and newer](https://aistudio.google.com/api-reference/generate-content). Every model call logs the prompt SHA-256, provider, model, token usage, and error to `logs/llm.jsonl`.
 
 ## Run the stages
 
@@ -38,9 +38,12 @@ The latest local checkpoint and its two review reasons are summarized in [SAMPLE
 python -m pipeline.pass1_baseline
 python -m pipeline.pass2_research
 python -m pipeline.pass3_verify
+python -m pipeline.finalize
 python -m pipeline.analyze
 python site/build.py
 ```
+
+`pipeline.finalize` preserves the raw `data/pass3.json` and writes immutable `data/pass3_final.json`, `data/verifier_log_final.json`, and `data/human_queue_final.json`. It rejects MCP URLs that cannot be tied to an app-owned MCP location, then recomputes confidence and the human queue. To merge an isolated verifier recovery, pass `--replace-app-id ID` for an existing `pass3_app_ID.json`; the current run merged IDs 93 and 97. Analysis and the site prefer the finalized files. This step uses no model calls.
 
 Optional delivery after pass 3: install `requirements-composio.txt`, connect a Google Sheets account in Composio, set `COMPOSIO_API_KEY`, `COMPOSIO_CONNECTED_ACCOUNT_ID`, and `COMPOSIO_SHEET_ID` in `.env`, then run `python -m pipeline.deliver_composio`. This uses the documented [Composio Python SDK proxy](https://docs.composio.dev/reference/sdk-reference/python/tools) to call the [Google Sheets values update API](https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/update). It writes A1:Q101 on the spreadsheet's first tab, so use a dedicated sheet. This optional path has not been live-tested without a connected account.
 
@@ -61,7 +64,7 @@ The single-app outputs use that app's ID in the filenames; existing files are pr
 
 `gold/gold_template.csv` contains 25 app identities and empty label fields. A human must read real docs and fill a copy named `gold/gold.csv` **before looking at the agent outputs**. Use `|` to separate multiple `auth_methods` or `api_type` values; enter `exists` or `not_exists` for `official_mcp`. This project never generates labels. The template excludes both development checkpoints, and all 10 categories have at least two apps. Keep the six newly selected holdout apps out of further tuning.
 
-After the three full passes and human labels exist:
+After the three full passes, finalization, and completed human labels exist:
 
 ```powershell
 python -m pipeline.score

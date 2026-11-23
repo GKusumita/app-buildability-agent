@@ -1,0 +1,55 @@
+{
+  "decisions": [
+    {
+      "app_id": 93,
+      "app": "Fathom",
+      "decisions": [
+        {
+          "field": "auth_methods",
+          "initial": {
+            "status": "supported",
+            "reason": "The evidence explicitly confirms support for both API keys and OAuth 2.0 flows."
+          },
+          "retry": null
+        },
+        {
+          "field": "self_serve",
+          "initial": {
+            "status": "supported",
+            "reason": "There is a free plan and self-serve trial options available to users."
+          },
+          "retry": null
+        },
+        {
+          "field": "api_type",
+          "initial": {
+            "status": "supported",
+            "reason": "The documentation states that Fathom has a public API."
+          },
+          "retry": null
+        },
+        {
+          "field": "app_review_required",
+          "initial": {
+            "status": "supported",
+            "reason": "The evidence does not indicate any mandatory app review or approval required to build workflows or use the public API."
+          },
+          "retry": null
+        },
+        {
+          "field": "verdict",
+          "initial": {
+            "status": "supported",
+            "reason": "The criteria for buildable_now are fully met with a documented public API and free or trial self-serve credentials."
+          },
+          "retry": null
+        }
+      ],
+      "consistency": null,
+      "computed_confidence": "high",
+      "unknown_fields": [
+        "webhooks"
+      ]
+    }
+  ]
+}

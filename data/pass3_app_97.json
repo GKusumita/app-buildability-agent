@@ -1,0 +1,188 @@
+{
+  "stage": "pass3_verified",
+  "created_at": "2026-11-23T15:19:08.770354+00:00",
+  "records": [
+    {
+      "result": {
+        "id": 97,
+        "name": "higgsfield",
+        "category": "AI Research and Media-native",
+        "one_liner": "AI-native creative suite offering a pay-as-you-go API for video and image generation, plus CLI and MCP integration for coding and",
+        "auth_methods": [
+          "oauth2",
+          "api_key"
+        ],
+        "self_serve": "unknown",
+        "app_review_required": "false",
+        "api_type": [
+          "unknown"
+        ],
+        "api_breadth": "broad",
+        "official_mcp": "https://higgsfield.ai/creator-hub/help-center/getting-started/what-is-the-higgsfield-api",
+        "webhooks": "unknown",
+        "rate_limits": "20 concurrent requests per API key",
+        "verdict": "could_not_identify",
+        "blocker": "none",
+        "blocker_note": "",
+        "evidence": [
+          {
+            "field": "auth_methods",
+            "url": "https://higgsfield.ai/creator-hub/help-center/getting-started/what-is-the-higgsfield-api",
+            "snippet": "3. Generate an API key in the console at [open.higgsfield.ai](http://open.higgsfield.ai/). For security, the full key appears only once, so save it right away. Creating a key unlocks 20 concurrent requests."
+          },
+          {
+            "field": "auth_methods",
+            "url": "https://higgsfield.ai/creator-hub/help-center/mcp-cli/how-do-i-access-higgsfield-via-cli",
+            "snippet": "2. **Sign in:** run `higgsfield auth login`. No API key needed."
+          },
+          {
+            "field": "auth_methods",
+            "url": "https://www.scalekit.com/blog/higgsfield-mcp-vs-api",
+            "snippet": "On the MCP path, Scalekit's Higgsfield MCP connector handles the OAuth flow, token storage, and refresh per user, so the credential lifecycle stops being code you maintain. The API path can move into the same vault through a custom connector, covered below."
+          }
+        ],
+        "confidence": "low",
+        "notes": "The Higgsfield API requires an API key generated at open.higgsfield.ai, supports REST and SDK access, and is pay-as-you-go with a prepaid balance. The CLI and MCP use the same higgsfield.ai account but do not require API keys and are intended"
+      },
+      "queries": [
+        "higgsfield higgsfield.ai/cli API authentication",
+        "higgsfield higgsfield.ai/cli API getting started get API key credentials",
+        "higgsfield API pricing access requirements partner program",
+        "higgsfield MCP server official",
+        "higgsfield official developer authentication OAuth API key",
+        "higgsfield official API credentials signup free trial partner approval pricing",
+        "higgsfield official API reference REST GraphQL endpoints",
+        "higgsfield official app review production verification approval requirements",
+        "higgsfield official developer API access production approval review requirements"
+      ],
+      "pages": [
+        "https://higgsfield.ai/creator-hub/help-center/getting-started/what-is-the-higgsfield-api",
+        "https://higgsfield.ai/cli",
+        "https://higgsfield.ai/blog/ai-video-api-pricing-vs-subscriptions",
+        "https://higgsfield.ai/creator-hub/help-center/mcp-cli/how-do-i-access-higgsfield-via-cli",
+        "https://docs.higgsfield.ai",
+        "https://docs.alternativepayments.io/web-sdk/authentication",
+        "https://docs.higgsfield.ai/docs/authentication",
+        "https://github.com/higgsfield-ai/cli/issues/72",
+        "https://mindcloud.co/docs/universal/rest/higgsfield-ai/latest/introduction/authentication",
+        "https://www.scalekit.com/blog/higgsfield-mcp-vs-api",
+        "https://higgsfield.ai/pricing",
+        "https://higgsfield.ai/higgsfield-api",
+        "https://www.catclaw.ai/guides/higgsfield-api-pricing-and-access",
+        "https://tavily.com/knowledge/company/hlRjFjCOdeNd",
+        "https://www.youtube.com/watch?v=52vbWgJy0Qo",
+        "https://docs.higgsfield.ai/docs/api-reference/overview",
+        "https://mindcloud.co/docs/universal/rest/higgsfield-ai/latest",
+        "https://www.youtube.com/watch?v=Vn6zMLpg-g0",
+        "https://geo.higgsfield.ai/blog/recommended/does-higgsfield-ai-have-data-privacy-issues-66eb10",
+        "https://higgsfield.ai/higgsfield-for-good",
+        "https://designerbox.ai/blog/higgsfield-ai-review",
+        "https://finance.yahoo.com/news/higgsfield-announces-50m-series-propel-133000532.html",
+        "https://zeely.ai/blog/higgsfield-ai-review",
+        "https://higgsfield.ai/blog/higgsfield-api",
+        "https://higgsfield.ai/terms-of-use-agreement",
+        "https://pict.ai/higgsfield/api",
+        "https://www.cbinsights.com/company/higgsfield-agents"
+      ],
+      "usage": {
+        "retry_auth_methods": {
+          "promptTokenCount": 17566,
+          "candidatesTokenCount": 263,
+          "totalTokenCount": 17829,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 17566
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "reverify_auth_methods": {
+          "promptTokenCount": 13265,
+          "candidatesTokenCount": 214,
+          "totalTokenCount": 13479,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 13265
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "retry_self_serve": {
+          "promptTokenCount": 25316,
+          "candidatesTokenCount": 120,
+          "totalTokenCount": 25436,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 25316
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "reverify_self_serve": {
+          "promptTokenCount": 18825,
+          "candidatesTokenCount": 260,
+          "totalTokenCount": 19085,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 18825
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "retry_api_type": {
+          "promptTokenCount": 29432,
+          "candidatesTokenCount": 143,
+          "totalTokenCount": 29575,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 29432
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "retry_app_review_required": {
+          "promptTokenCount": 38649,
+          "candidatesTokenCount": 90,
+          "totalTokenCount": 38739,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 38649
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "reverify_app_review_required": {
+          "promptTokenCount": 29133,
+          "candidatesTokenCount": 304,
+          "totalTokenCount": 29437,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 29133
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "errors": [
+        "api_type: retry research failed: retry evidence_invalid: api_type: evidence_invalid: https://higgsfield.ai/creator-hub/help-center/getting-started/what-is-the-higgsfield-api; api_type: evidence_invalid: no valid citation",
+        "unresolved research field: api_type",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "Verifier call failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "api_type: insufficient_evidence: Verifier failed",
+        "self_serve: contradicted: The claim states 'free_self_serve', but documentation and guides explicitly confirm there is no permanent free tier or free monthly allowance; it is pay-as-you-go from the first request requiring a prepaid balance and payment method.",
+        "verdict: insufficient_evidence: Verifier failed"
+      ],
+      "evidence_invalid": [],
+      "deterministic_rules": []
+    }
+  ]
+}

@@ -14,9 +14,9 @@ from schema import (APIType, AppResult, Auth, Blocker, Confidence, Evidence,
 from pipeline.common import (pass_payload, path_for, read_pass, require_env,
                              require_llm_key, result_record, select_apps, write_immutable)
 from pipeline.evidence_check import normalise, set_unknown, validate_evidence
-from pipeline.llm import rubric_text, structured_call
+from pipeline.llm import model_for, rubric_text, structured_call
 from pipeline.research import Tavily, gather_pages, prompt_pages, cache_file, quote_bank, resolve_quote_ids
-from pipeline.rules import apply_rule2
+from pipeline.rules import apply_rule2, constrain_official_mcp
 
 
 class Check(BaseModel):
@@ -107,7 +107,7 @@ def verification_prompt(result: AppResult, pages: dict[str, str], field: str | N
 
 async def verify(client: httpx.AsyncClient, result: AppResult, pages: dict[str, str],
                  label: str, field: str | None = None) -> tuple[Verification, dict]:
-    model = os.getenv("OPENAI_VERIFY_MODEL", "gpt-4.1")
+    model = model_for(verify=True)
     parsed, usage = await structured_call(client, model, verification_prompt(result, pages, field),
                                           Verification, label)
     for name in CLAIM_FIELDS:
@@ -279,7 +279,7 @@ async def run() -> None:
                                 f"Previous value: {json.dumps(getattr(result, field), default=str)}\n"
                                 f"RUBRIC:\n{rubric_text()}\n\nQUOTE BANK:\n{bank}\n\n{prompt_pages(pages, 7000)}")
                             answer, retry_usage = await structured_call(
-                                client, os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), prompt,
+                                client, model_for(), prompt,
                                 TARGET_MODELS[field], f"retry:{app.id}:{field}")
                             if field == "app_review_required":
                                 if answer.value != Tri.UNKNOWN:
@@ -323,6 +323,9 @@ async def run() -> None:
                 rules = list(original.get("deterministic_rules", []))
                 if rule and rule not in rules:
                     rules.append(rule)
+                result, mcp_issue = constrain_official_mcp(app, result)
+                if mcp_issue:
+                    rules.append(mcp_issue)
                 result, consistency_issue = consistency(result)
                 if consistency_issue:
                     verifier_rejections.append("consistency: " + consistency_issue)

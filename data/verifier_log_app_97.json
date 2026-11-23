@@ -1,0 +1,74 @@
+{
+  "decisions": [
+    {
+      "app_id": 97,
+      "app": "higgsfield",
+      "decisions": [
+        {
+          "field": "auth_methods",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": {
+            "status": "supported",
+            "reason": "The evidence shows both OAuth (via MCP/CLI auth login) and API keys are supported methods."
+          }
+        },
+        {
+          "field": "self_serve",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": {
+            "status": "contradicted",
+            "reason": "The claim states 'free_self_serve', but documentation and guides explicitly confirm there is no permanent free tier or free monthly allowance; it is pay-as-you-go from the first request requiring a prepaid balance and payment method."
+          }
+        },
+        {
+          "field": "api_type",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": null,
+          "retry_error": "retry evidence_invalid: api_type: evidence_invalid: https://higgsfield.ai/creator-hub/help-center/getting-started/what-is-the-higgsfield-api; api_type: evidence_invalid: no valid citation"
+        },
+        {
+          "field": "app_review_required",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": {
+            "status": "supported",
+            "reason": "The claim states that app_review_required is false, and self-serve API access allows building and production usage through direct API keys without requiring platform app review."
+          },
+          "retry_evidence": {
+            "field": "verdict",
+            "url": "https://higgsfield.ai/creator-hub/help-center/getting-started/what-is-the-higgsfield-api",
+            "snippet": "3. Generate an API key in the console at [open.higgsfield.ai](http://open.higgsfield.ai/). For security, the full key appears only once, so save it right away. Creating a key unlocks 20 concurrent requests."
+          }
+        },
+        {
+          "field": "verdict",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": null,
+          "retry_error": "Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+        }
+      ],
+      "consistency": null,
+      "computed_confidence": "low",
+      "unknown_fields": [
+        "self_serve",
+        "api_type",
+        "webhooks",
+        "verdict"
+      ]
+    }
+  ]
+}

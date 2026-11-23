@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import os
 
 import httpx
 from pydantic import ValidationError
@@ -10,7 +9,7 @@ from pydantic import ValidationError
 from schema import AppResult, Confidence, check_identity, unknown_result
 from pipeline.common import pass_payload, path_for, require_env, require_llm_key, result_record, select_apps, write_immutable
 from pipeline.evidence_check import validate_evidence
-from pipeline.llm import rubric_text, structured_call
+from pipeline.llm import model_for, rubric_text, structured_call
 from pipeline.research import Tavily, gather_pages, prompt_pages, quote_bank, resolve_quote_ids
 from pipeline.rules import apply_rule2
 
@@ -55,7 +54,7 @@ async def run() -> None:
                 rules = []
                 try:
                     try:
-                        result, usage = await structured_call(client, os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+                        result, usage = await structured_call(client, model_for(),
                                                               prompt, AppResult, f"pass2:{app.id}")
                     except ValidationError as exc:
                         # JSON schema cannot express cross-field rules such as
@@ -65,7 +64,7 @@ async def run() -> None:
                                   + "\nReturn the complete answer again. The auth value none must stand "
                                     "alone; use API credentials for the hosted API and describe any "
                                     "keyless endpoints in notes. Cite quote-bank IDs exactly.")
-                        result, usage = await structured_call(client, os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+                        result, usage = await structured_call(client, model_for(),
                                                               repair, AppResult, f"pass2_repair:{app.id}")
                     check_identity(result, app)
                     resolve_quote_ids(result.evidence, lookup)

@@ -19,10 +19,10 @@ def read_json(path: Path) -> dict | None:
 
 
 def main() -> None:
-    final = read_json(ROOT / "data" / "pass3.json")
+    final = read_json(ROOT / "data" / "pass3_final.json") or read_json(ROOT / "data" / "pass3.json")
     accuracy = read_json(ROOT / "data" / "accuracy.json")
-    patterns = read_json(ROOT / "data" / "patterns.json")
-    queue = read_json(ROOT / "data" / "human_queue.json")
+    patterns = read_json(ROOT / "data" / "patterns_final.json") or read_json(ROOT / "data" / "patterns.json")
+    queue = read_json(ROOT / "data" / "human_queue_final.json") or read_json(ROOT / "data" / "human_queue.json")
     delivery = read_json(ROOT / "data" / "composio_delivery.json")
     apps = load_apps()
     rows = {row["result"]["id"]: row for row in final["records"]} if final else {}
@@ -48,6 +48,9 @@ def main() -> None:
         "human_queue": queue["apps"] if queue else [],
         "human_queue_summary": {key: queue[key] for key in ("sample_size", "queued_count", "queue_rate")}
         if queue else None, "misses": misses,
+        "provider_failure_count": sum(any("generativelanguage.googleapis.com" in error
+                                          or "openrouter.ai/api/v1" in error
+                                          for error in row.get("errors", [])) for row in results),
         "repo_url": os.getenv("REPO_URL", ""), "deploy_url": os.getenv("DEPLOY_URL", ""),
         "composio_status": f"delivered {delivery['rows']} rows" if delivery else "optional delivery not run",
     }
