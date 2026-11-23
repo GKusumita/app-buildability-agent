@@ -4,7 +4,7 @@ A Python 3.11 research pipeline for the 100 apps in `apps.csv`. It separates a n
 
 ## Current state
 
-The implementation is complete locally. The live API passes, human gold labels, Composio delivery, and publication require the configured accounts described below. The generated preview currently says **0/100 verified**. Do not present that preview as a completed research result.
+The implementation is complete locally. The live API passes, human gold labels, and Composio delivery require the configured accounts described below. The [public preview](https://gkusumita.github.io/app-buildability-agent/) currently says **0/100 verified**. Do not present that preview as a completed research result. Source is at [GKusumita/app-buildability-agent](https://github.com/GKusumita/app-buildability-agent).
 
 ## Prerequisites and setup
 

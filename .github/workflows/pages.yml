@@ -25,6 +25,7 @@ jobs:
       - name: Build static report
         env:
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          DEPLOY_URL: https://gkusumita.github.io/app-buildability-agent/
         run: python site/build.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
