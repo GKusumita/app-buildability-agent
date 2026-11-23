@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict
 from schema import (APIType, AppResult, Auth, Blocker, Confidence, Evidence,
                     SelfServe, Tri, Verdict, ROOT, load_apps)
 from pipeline.common import (pass_payload, path_for, read_pass, require_env,
-                             result_record, select_apps, write_immutable)
+                             require_llm_key, result_record, select_apps, write_immutable)
 from pipeline.evidence_check import set_unknown, validate_evidence
 from pipeline.llm import rubric_text, structured_call
 from pipeline.research import Tavily, gather_pages, prompt_pages, cache_file
@@ -145,7 +145,8 @@ def patch_target(result: AppResult, field: str, answer: TargetAnswer) -> AppResu
 
 async def run() -> None:
     apps, sample = select_apps()
-    require_env("OPENAI_API_KEY", "TAVILY_API_KEY")
+    require_env("TAVILY_API_KEY")
+    require_llm_key()
     single = apps[0] if len(apps) == 1 else None
     source = path_for("pass2", sample, single)
     if not source.exists():

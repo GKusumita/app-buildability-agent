@@ -7,13 +7,13 @@ import os
 import httpx
 
 from schema import AppResult, check_identity, unknown_result
-from pipeline.common import pass_payload, path_for, require_env, result_record, select_apps, write_immutable
+from pipeline.common import pass_payload, path_for, require_llm_key, result_record, select_apps, write_immutable
 from pipeline.llm import rubric_text, structured_call
 
 
 async def run() -> None:
     apps, sample = select_apps()
-    require_env("OPENAI_API_KEY")
+    require_llm_key()
     output = path_for("pass1", sample, apps[0] if len(apps) == 1 else None)
     if output.exists():
         raise SystemExit(f"Refusing to overwrite immutable output: {output}")
@@ -21,7 +21,10 @@ async def run() -> None:
     async with httpx.AsyncClient() as client:
         async def one(app):
             prompt = ("No web or tools. Give a cautious baseline from existing model knowledge. "
-                      "Do not claim live verification. Leave evidence empty. Unknown is preferable to guessing.\n\n"
+                      "Do not claim live verification. Leave evidence empty. Unknown is preferable to guessing. "
+                      "For official_mcp use a complete https:// URL only if confident it is the official MCP; "
+                      "otherwise use unknown or none. Never copy the hint as a partial URL. "
+                      "Keep one_liner under 20 words and notes under 40 words.\n\n"
                       f"App: {app.model_dump_json()}\n\n{rubric_text()}")
             async with semaphore:
                 try:

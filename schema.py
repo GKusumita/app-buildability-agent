@@ -151,16 +151,12 @@ class AppResult(BaseModel):
     @field_validator("one_liner")
     @classmethod
     def one_liner_words(cls, value: str) -> str:
-        if len(value.split()) > 20:
-            raise ValueError("one_liner exceeds 20 words")
-        return value
+        return " ".join(value.split()[:20])
 
     @field_validator("notes")
     @classmethod
     def notes_words(cls, value: str) -> str:
-        if len(value.split()) > 40:
-            raise ValueError("notes exceeds 40 words")
-        return value
+        return " ".join(value.split()[:40])
 
     @field_validator("official_mcp")
     @classmethod
@@ -169,7 +165,7 @@ class AppResult(BaseModel):
             return value
         parsed = urlparse(value)
         if parsed.scheme not in {"http", "https"} or not parsed.netloc:
-            raise ValueError("official_mcp must be an HTTP(S) URL, none, or unknown")
+            return "unknown"
         return value
 
     @model_validator(mode="after")

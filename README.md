@@ -8,7 +8,7 @@ The implementation is complete locally. The live API passes, human gold labels, 
 
 ## Prerequisites and setup
 
-- Python 3.11, an OpenAI API key, and a Tavily API key.
+- Python 3.11, an OpenRouter **or** OpenAI API key, and a Tavily API key.
 - Optional: a connected Google Sheets account in Composio, a target spreadsheet ID, and GitHub Pages for publication.
 
 ```powershell
@@ -18,7 +18,7 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Fill `OPENAI_API_KEY` and `TAVILY_API_KEY` in `.env`. Do not commit `.env`. The defaults use `gpt-4.1-mini` for answering and a different model, `gpt-4.1`, for verification. Both use temperature 0 and strict JSON-schema output. If those models are unavailable on the account, set `OPENAI_MODEL` and `OPENAI_VERIFY_MODEL` to available models that accept temperature 0 and Structured Outputs. Every model call logs the prompt SHA-256, model, token usage, and error to `logs/llm.jsonl`.
+Fill `OPENROUTER_API_KEY` **or** `OPENAI_API_KEY`, plus `TAVILY_API_KEY`, in `.env`. OpenRouter takes precedence if both are present. Do not commit `.env`. The defaults use `gpt-4.1-mini` for answering and a different model, `gpt-4.1`, for verification. With OpenRouter, unprefixed `gpt-*` names are mapped to `openai/gpt-*`; other provider/model slugs are passed through. Both routes use temperature 0 and strict JSON-schema output. OpenRouter also requires a provider endpoint that supports all supplied parameters. If the defaults are unavailable, set `OPENAI_MODEL` and `OPENAI_VERIFY_MODEL` to available structured-output models. Every model call logs the prompt SHA-256, provider, model, token usage, and error to `logs/llm.jsonl`. See [OpenRouter structured outputs](https://openrouter.ai/blog/tutorials/structured-output-llm/) and the [OpenAI Responses schema guide](https://developers.openai.com/api/docs/guides/structured-outputs).
 
 ## Run the stages
 
@@ -43,6 +43,8 @@ python site/build.py
 Optional delivery after pass 3: install `requirements-composio.txt`, connect a Google Sheets account in Composio, set `COMPOSIO_API_KEY`, `COMPOSIO_CONNECTED_ACCOUNT_ID`, and `COMPOSIO_SHEET_ID` in `.env`, then run `python -m pipeline.deliver_composio`. This uses the documented [Composio Python SDK proxy](https://docs.composio.dev/reference/sdk-reference/python/tools) to call the [Google Sheets values update API](https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/update). It writes A1:Q101 on the spreadsheet's first tab, so use a dedicated sheet. This optional path has not been live-tested without a connected account.
 
 Each pass output is immutable. The program refuses to overwrite `data/pass1.json`, `data/pass2.json`, or `data/pass3.json`. Back up and deliberately remove a pass file if a new run is intended; keep the original for the improvement comparison. Cached Tavily searches and extracts live under `cache/`, with extracted pages keyed by URL hash. A rerun reuses those results. Pass 2 stores queries, fetched URLs, token usage, and errors per app. Pass 3 adds `data/verifier_log.json` and `data/human_queue.json`.
+
+To rerun a five-app checkpoint without overwriting its first result, set `APP_RESEARCH_RUN_TAG=retry1` for that command. The output becomes, for example, `data/pass1_sample_retry1.json`. Use the same tag for related pass 2 and pass 3 sample files.
 
 Run a single app through all three passes with:
 
@@ -78,7 +80,7 @@ The page embeds the same results as JSON, supports filtering and sorting, links 
 
 For 100 apps, the first grounded pass makes up to **400 basic searches** and **500 page extracts**. At Tavily's published rates, this is roughly **500 credits** before targeted retries; the free Researcher plan currently includes 1,000 monthly credits. Four failed claim checks per app could add up to about 800 more search/extract credits in the worst case. See [Tavily search credits](https://help.tavily.com/articles/6938147944-basic-vs-advanced-search-what-s-the-difference), [extract credits](https://help.tavily.com/articles/8721959612-what-is-the-tavily-extract-api), and [current pricing](https://www.tavily.com/pricing).
 
-At the default OpenAI models and roughly 1–10k input tokens per call, expect **a few US dollars before retries**, with a rough **$2–$12** range depending on page length and retry rate. This is an estimate, not a measured bill; inspect `logs/llm.jsonl` for actual tokens and the [current OpenAI model prices](https://developers.openai.com/api/docs/models). Eight apps run concurrently. Network latency and provider limits dominate runtime; allow **tens of minutes to a few hours** for all passes and review the five-app checkpoint first.
+At the default models and roughly 1–10k input tokens per call, expect **a few US dollars before retries**, with a rough **$2–$12** range depending on page length and retry rate. This is an estimate, not a measured bill; inspect `logs/llm.jsonl` for actual tokens and the [current OpenRouter model prices](https://openrouter.ai/openai/gpt-4.1-mini). Eight apps run concurrently. Network latency and provider limits dominate runtime; allow **tens of minutes to a few hours** for all passes and review the five-app checkpoint first.
 
 ## What needs a human
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -38,6 +39,11 @@ def require_env(*names: str) -> None:
         raise SystemExit("Missing .env values: " + ", ".join(missing))
 
 
+def require_llm_key() -> None:
+    if not (os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")):
+        raise SystemExit("Set OPENROUTER_API_KEY or OPENAI_API_KEY in .env")
+
+
 def write_immutable(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     try:
@@ -63,5 +69,8 @@ def result_record(result: AppResult, **metadata: object) -> dict:
 
 
 def path_for(stage: str, sample: bool, app: AppInput | None = None) -> Path:
-    suffix = "_sample" if sample else f"_app_{app.id}" if app else ""
+    tag = os.getenv("APP_RESEARCH_RUN_TAG", "")
+    if tag and not re.fullmatch(r"[A-Za-z0-9_-]+", tag):
+        raise ValueError("APP_RESEARCH_RUN_TAG must be letters, digits, _ or -")
+    suffix = ("_sample" + (f"_{tag}" if tag else "")) if sample else f"_app_{app.id}" if app else ""
     return ROOT / "data" / f"{stage}{suffix}.json"

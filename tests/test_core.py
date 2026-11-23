@@ -11,6 +11,7 @@ from pydantic import ValidationError
 
 from schema import AppResult, Evidence, load_apps, unknown_result
 from pipeline.evidence_check import validate_evidence
+from pipeline.llm import provider_config
 from pipeline.pass3_verify import consistency
 from pipeline.research import Tavily
 
@@ -82,6 +83,14 @@ class CoreTests(unittest.TestCase):
                 self.assertEqual(len(list((Path(directory) / "cache").glob("search_result-*.json"))), 1)
             self.assertEqual(len(client.calls), 2)
         asyncio.run(work())
+
+    def test_openrouter_model_mapping(self):
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "fake-key"}):
+            provider, endpoint, key, model = provider_config("gpt-4.1-mini")
+        self.assertEqual(provider, "openrouter")
+        self.assertEqual(model, "openai/gpt-4.1-mini")
+        self.assertEqual(key, "fake-key")
+        self.assertTrue(endpoint.endswith("/chat/completions"))
 
 
 if __name__ == "__main__":
