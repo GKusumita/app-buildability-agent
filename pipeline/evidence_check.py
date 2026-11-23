@@ -38,7 +38,7 @@ def validate_evidence(result: AppResult, pages: dict[str, str],
             invalid.append(f"{field}: evidence_invalid: no valid citation")
             set_unknown(result, field)
     if source_urls is not None and result.official_mcp not in {"none", "unknown"}:
-        if result.official_mcp not in source_urls:
+        if result.official_mcp not in source_urls and not any(result.official_mcp in page for page in pages.values()):
             invalid.append("official_mcp: URL was not returned by search/extract")
             result.official_mcp = "unknown"
     if invalid:

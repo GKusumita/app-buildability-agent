@@ -13,7 +13,7 @@ from schema import AppResult, Evidence, load_apps, unknown_result
 from pipeline.evidence_check import validate_evidence
 from pipeline.llm import provider_config
 from pipeline.pass3_verify import consistency
-from pipeline.research import Tavily
+from pipeline.research import Tavily, quote_bank, resolve_quote_ids
 
 
 class FakeResponse:
@@ -92,6 +92,21 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(model, "openai/gpt-4.1-mini")
         self.assertEqual(key, "fake-key")
         self.assertTrue(endpoint.endswith("/chat/completions"))
+
+    def test_quote_ids_resolve_to_fetched_verbatim_text(self):
+        url = "https://docs.example.com/auth"
+        page = "The API uses an API key to authenticate every request.\n"
+        bank, lookup = quote_bank({url: page})
+        self.assertIn("Q1:", bank)
+        evidence = [Evidence(field="auth_methods", url=url, snippet="Q1")]
+        resolve_quote_ids(evidence, lookup)
+        self.assertEqual(evidence[0].snippet, page.strip())
+        result = unknown_result(self.app, "test")
+        result.auth_methods = ["api_key"]
+        result.evidence = evidence
+        checked, invalid = validate_evidence(result, {url: page})
+        self.assertEqual(invalid, [])
+        self.assertEqual(checked.evidence[0].snippet, page.strip())
 
 
 if __name__ == "__main__":

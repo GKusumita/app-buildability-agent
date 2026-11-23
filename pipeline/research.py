@@ -5,13 +5,14 @@ import asyncio
 import hashlib
 import json
 import os
+import re
 from contextlib import AsyncExitStack
 from pathlib import Path
 from urllib.parse import urlparse
 
 import httpx
 
-from schema import AppInput, ROOT
+from schema import AppInput, Evidence, ROOT
 
 
 def digest(value: str) -> str:
@@ -103,17 +104,28 @@ class Tavily:
 
 def queries_for(app: AppInput) -> list[tuple[str, list[str] | None]]:
     name, domain = app.name, official_domain(app.hint)
+    if app.hint.startswith("github.com/"):
+        repo = app.hint.split()[0].removeprefix("github.com/")
+        return [
+            (f"{repo} GitHub README authentication CLI", ["github.com"]),
+            (f"{repo} public REST API credentials", ["github.com"]),
+            (f"{repo} pricing hosted access", None),
+            (f"{repo} official MCP server", None),
+        ]
+    context = app.hint.split()[0]
     return [
-        (f"{name} API authentication", [domain] if domain else None),
-        (f"{name} API getting started get API key credentials", [domain] if domain else None),
+        (f"{name} {context} API authentication", [domain] if domain else None),
+        (f"{name} {context} API getting started get API key credentials", [domain] if domain else None),
         (f"{name} API pricing access requirements partner program", None),
         (f"{name} MCP server official", None),
     ]
 
 
-def choose_urls(searches: list[dict], domain: str | None, limit: int = 5) -> list[str]:
+def choose_urls(searches: list[dict], hint: str, limit: int = 5) -> list[str]:
     candidates: dict[str, int] = {}
     per_query: list[list[str]] = []
+    domain = official_domain(hint)
+    hint_url = hint.split()[0].lower()
     for search in searches:
         query_urls = []
         for item in search.get("results", []):
@@ -123,6 +135,7 @@ def choose_urls(searches: list[dict], domain: str | None, limit: int = 5) -> lis
                 continue
             context = f"{item.get('title', '')} {url}".lower()
             score = 3 if domain and (parsed.netloc == domain or parsed.netloc.endswith("." + domain)) else 0
+            score += 5 if hint_url in url.lower() else 0
             score += sum(word in context for word in ("auth", "getting-started", "api-key", "pricing", "developer", "mcp"))
             candidates[url] = max(score, candidates.get(url, 0))
             query_urls.append(url)
@@ -155,6 +168,37 @@ def prompt_pages(pages: dict[str, str], max_chars: int = 9500) -> str:
     return "\n\n".join(chunks)
 
 
+def quote_bank(pages: dict[str, str], max_lines: int = 24) -> tuple[str, dict[tuple[str, str], str]]:
+    """Candidate whole lines copied from raw text, with IDs resolved after the model call."""
+    keywords = ("auth", "oauth", "api key", "token", "credential", "rest api", "graphql",
+                "cli", "mcp", "review", "approval", "partner", "trial", "free", "sandbox",
+                "pricing", "public api", "sign up", "create an app")
+    blocks = []
+    lookup = {}
+    for url, raw in pages.items():
+        lines = [line.strip() for line in raw.splitlines()]
+        candidates = []
+        for index, line in enumerate(lines):
+            if not 30 <= len(line) <= 300 or re.fullmatch(r"\[.+\]\(.+\)", line):
+                continue
+            matches = sum(word in line.lower() for word in keywords)
+            if matches:
+                score = matches * 3 + int(len(line) >= 75) + int(". " in line or line.endswith("."))
+                candidates.append((-score, index, line))
+        unique = list(dict.fromkeys(line for _, _, line in sorted(candidates)))[:max_lines]
+        if unique:
+            for index, line in enumerate(unique, 1):
+                lookup[(url, f"Q{index}")] = line
+            blocks.append("URL: " + url + "\n" + "\n".join(f"Q{index}: {line}" for index, line in enumerate(unique, 1)))
+    return "\n\n".join(blocks), lookup
+
+
+def resolve_quote_ids(evidence: list[Evidence], lookup: dict[tuple[str, str], str]) -> None:
+    for entry in evidence:
+        if re.fullmatch(r"Q\d+", entry.snippet):
+            entry.snippet = lookup.get((entry.url, entry.snippet), entry.snippet)
+
+
 async def gather_pages(tavily: Tavily, app: AppInput,
                        queries: list[tuple[str, list[str] | None]] | None = None) -> tuple[list[str], dict[str, str], set[str], list[str]]:
     used: list[str] = []
@@ -167,7 +211,7 @@ async def gather_pages(tavily: Tavily, app: AppInput,
         except Exception as exc:
             errors.append(f"Search {query}: {exc}")
     source_urls = {item.get("url", "") for data in searches for item in data.get("results", [])}
-    urls = choose_urls(searches, official_domain(app.hint))
+    urls = choose_urls(searches, app.hint)
     try:
         pages = await tavily.extract(urls)
     except Exception as exc:
