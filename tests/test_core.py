@@ -9,11 +9,14 @@ from unittest.mock import patch
 
 from pydantic import ValidationError
 
-from schema import AppResult, Evidence, load_apps, unknown_result
+from schema import (APIType, AppResult, Auth, Breadth, Confidence, Evidence,
+                    SelfServe, Tri, Verdict, load_apps, unknown_result)
 from pipeline.evidence_check import validate_evidence
-from pipeline.llm import provider_config
-from pipeline.pass3_verify import consistency
+from pipeline.llm import normalise_app_result_payload, provider_config
+from pipeline.pass3_verify import (Check, Verification, compute_confidence,
+                                   consistency, unknown_fields, verify)
 from pipeline.research import Tavily, quote_bank, resolve_quote_ids
+from pipeline.rules import apply_rule2
 
 
 class FakeResponse:
@@ -68,7 +71,68 @@ class CoreTests(unittest.TestCase):
         row.verdict = "buildable_now"
         checked, issue = consistency(row)
         self.assertEqual(str(checked.verdict), "could_not_identify")
-        self.assertIn("lacks known", issue)
+        self.assertIn("unknown", issue)
+
+    def test_now_requires_known_auth_and_access(self):
+        row = unknown_result(self.app, "test")
+        row.api_type = ["rest"]
+        row.app_review_required = "false"
+        row.verdict = "buildable_now"
+        for auth, access in [(["unknown"], "free_self_serve"), (["api_key"], "unknown")]:
+            candidate = row.model_copy(deep=True)
+            candidate.auth_methods = auth
+            candidate.self_serve = access
+            checked, issue = consistency(candidate)
+            self.assertEqual(str(checked.verdict), "could_not_identify")
+            self.assertIn("unknown", issue)
+
+    def test_rule2_is_deterministic_for_mermaid_cli(self):
+        app = next(app for app in load_apps() if app.name == "Mermaid CLI")
+        row = unknown_result(app, "test")
+        url = "https://github.com/mermaid-js/mermaid-cli"
+        pages = {url: ("[MIT license](#MIT-1-ov-file)\n"
+                       "This is a command-line interface (CLI) that generates SVG diagrams from local files.\n")}
+        fixed, rule = apply_rule2(app, row, pages)
+        self.assertIsNotNone(rule)
+        self.assertEqual([str(auth) for auth in fixed.auth_methods], ["none"])
+        self.assertEqual(str(fixed.self_serve), "not_applicable")
+        self.assertEqual(str(fixed.verdict), "not_applicable")
+        checked, invalid = validate_evidence(fixed, pages)
+        self.assertEqual(invalid, [])
+        self.assertEqual(str(checked.self_serve), "not_applicable")
+
+    def test_confidence_comes_from_checks_and_unknown_count(self):
+        row = unknown_result(self.app, "test")
+        row.auth_methods = [Auth.API_KEY]
+        row.self_serve = SelfServe.FREE
+        row.api_type = [APIType.REST]
+        row.verdict = Verdict.NOW
+        row.app_review_required = Tri.FALSE
+        row.confidence = Confidence.HIGH  # Deliberately untrusted model value.
+        decisions = [{"initial": {"status": "supported"}, "retry": None} for _ in range(5)]
+        self.assertEqual(str(compute_confidence(row, decisions, [], [])), "medium")
+        row.api_breadth = Breadth.BROAD
+        row.official_mcp = "none"
+        row.webhooks = Tri.TRUE
+        row.rate_limits = "documented"
+        self.assertEqual(unknown_fields(row), [])
+        self.assertEqual(str(compute_confidence(row, decisions, [], [])), "high")
+        self.assertEqual(str(compute_confidence(row, decisions, [], ["verdict rejected"])), "low")
+
+    def test_verifier_cannot_support_an_unknown_claim(self):
+        row = unknown_result(self.app, "test")
+        yes = Check(status="supported", reason="model says supported")
+        answer = Verification(**{field: yes.model_copy(deep=True) for field in
+                                 ("auth_methods", "self_serve", "api_type",
+                                  "app_review_required", "verdict")})
+        async def fake_call(*args, **kwargs):
+            return answer, {}
+        async def work():
+            with patch("pipeline.pass3_verify.structured_call", fake_call):
+                return await verify(None, row, {}, "test")
+        checked, _ = asyncio.run(work())
+        self.assertEqual(checked.auth_methods.status, "insufficient_evidence")
+        self.assertEqual(checked.verdict.status, "insufficient_evidence")
 
     def test_tavily_cache_avoids_repeat_credits(self):
         async def work():
@@ -93,11 +157,22 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(key, "fake-key")
         self.assertTrue(endpoint.endswith("/chat/completions"))
 
+    def test_mixed_no_auth_sentinel_is_removed_for_hosted_api(self):
+        payload = unknown_result(self.app, "test").model_dump(mode="json")
+        payload["auth_methods"] = ["none", "api_key", "oauth2"]
+        changes = normalise_app_result_payload(payload)
+        self.assertEqual(payload["auth_methods"], ["api_key", "oauth2"])
+        self.assertTrue(changes)
+        self.assertEqual([str(x) for x in AppResult.model_validate(payload).auth_methods],
+                         ["api_key", "oauth2"])
+
     def test_quote_ids_resolve_to_fetched_verbatim_text(self):
         url = "https://docs.example.com/auth"
+        other = "https://docs.example.com/pricing"
         page = "The API uses an API key to authenticate every request.\n"
-        bank, lookup = quote_bank({url: page})
+        bank, lookup = quote_bank({url: page, other: "A free trial offers API credentials.\n"})
         self.assertIn("Q1:", bank)
+        self.assertIn("Q2:", bank)
         evidence = [Evidence(field="auth_methods", url=url, snippet="Q1")]
         resolve_quote_ids(evidence, lookup)
         self.assertEqual(evidence[0].snippet, page.strip())
@@ -107,6 +182,9 @@ class CoreTests(unittest.TestCase):
         checked, invalid = validate_evidence(result, {url: page})
         self.assertEqual(invalid, [])
         self.assertEqual(checked.evidence[0].snippet, page.strip())
+        second = [Evidence(field="self_serve", url=url, snippet="Q2")]
+        resolve_quote_ids(second, lookup)
+        self.assertEqual(second[0].url, other)
 
 
 if __name__ == "__main__":

@@ -45,7 +45,9 @@ def main() -> None:
         "status": "complete" if final and len(rows) == len(apps) else "pending",
         "total_apps": len(apps), "verified_apps": len(rows),
         "results": results, "patterns": patterns, "accuracy": accuracy,
-        "human_queue": queue["apps"] if queue else [], "misses": misses,
+        "human_queue": queue["apps"] if queue else [],
+        "human_queue_summary": {key: queue[key] for key in ("sample_size", "queued_count", "queue_rate")}
+        if queue else None, "misses": misses,
         "repo_url": os.getenv("REPO_URL", ""), "deploy_url": os.getenv("DEPLOY_URL", ""),
         "composio_status": f"delivered {delivery['rows']} rows" if delivery else "optional delivery not run",
     }

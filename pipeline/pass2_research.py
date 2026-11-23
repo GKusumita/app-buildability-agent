@@ -5,12 +5,14 @@ import asyncio
 import os
 
 import httpx
+from pydantic import ValidationError
 
-from schema import AppResult, check_identity, unknown_result
+from schema import AppResult, Confidence, check_identity, unknown_result
 from pipeline.common import pass_payload, path_for, require_env, require_llm_key, result_record, select_apps, write_immutable
 from pipeline.evidence_check import validate_evidence
 from pipeline.llm import rubric_text, structured_call
 from pipeline.research import Tavily, gather_pages, prompt_pages, quote_bank, resolve_quote_ids
+from pipeline.rules import apply_rule2
 
 
 async def run() -> None:
@@ -38,25 +40,46 @@ async def run() -> None:
                     "one URL and a verbatim excerpt from that page. If facts are insufficient, use unknown "
                     "or could_not_identify. official_mcp must be a complete URL returned by search, "
                     "or unknown/none. Keep the CSV id/name/category exact. For every evidence object, "
-                    "set snippet to a Q number from the QUOTE BANK under that URL (for example Q3). "
-                    "The runner replaces it with the original verbatim line. Choose a line that actually "
+                    "set snippet to a Q number from the QUOTE BANK (for example Q3). "
+                    "The runner replaces the Q number and URL with the original fetched URL and verbatim line. "
+                    "Choose a line that actually "
                     "supports the claim. Never paraphrase or invent a Q number.\n\n"
+                    "Classify the core API named in the hint. Do not treat optional app marketplace, "
+                    "partner membership, MCP server, or a third-party wrapper as a requirement for "
+                    "ordinary API access. For an open-source CLI with no hosted credentials, use "
+                    "not_applicable, not free_self_serve.\n\n"
                     f"APP: {app.model_dump_json()}\n\nRUBRIC:\n{rubric_text()}\n\n"
                     f"QUOTE BANK (verbatim extracted lines):\n{bank}\n\n"
                     f"PAGE EXCERPTS:\n{prompt_pages(usable, 7000)}")
                 usage = {}
+                rules = []
                 try:
-                    result, usage = await structured_call(client, os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
-                                                          prompt, AppResult, f"pass2:{app.id}")
+                    try:
+                        result, usage = await structured_call(client, os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+                                                              prompt, AppResult, f"pass2:{app.id}")
+                    except ValidationError as exc:
+                        # JSON schema cannot express cross-field rules such as
+                        # "none" authentication standing alone. Try one repair.
+                        repair = (prompt + "\n\nYour previous answer violated a cross-field schema rule: "
+                                  + str(exc).split("[type=", 1)[0][:250]
+                                  + "\nReturn the complete answer again. The auth value none must stand "
+                                    "alone; use API credentials for the hosted API and describe any "
+                                    "keyless endpoints in notes. Cite quote-bank IDs exactly.")
+                        result, usage = await structured_call(client, os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+                                                              repair, AppResult, f"pass2_repair:{app.id}")
                     check_identity(result, app)
                     resolve_quote_ids(result.evidence, lookup)
-                    result, invalid = validate_evidence(result, usable, source_urls)
                 except Exception as exc:
                     errors.append(f"Grounded call: {exc}")
                     result = unknown_result(app, f"Grounded call failed: {exc}")
-                    invalid = []
+                result, rule = apply_rule2(app, result, usable)
+                if rule:
+                    rules.append(rule)
+                result, invalid = validate_evidence(result, usable, source_urls)
+                result.confidence = Confidence.LOW  # Provisional until pass 3 computes confidence.
                 return result_record(result, queries=queries, pages=list(pages), usage=usage,
-                                     errors=errors, evidence_invalid=invalid)
+                                     errors=errors, evidence_invalid=invalid,
+                                     deterministic_rules=rules)
         records = await asyncio.gather(*(one(app) for app in apps))
     write_immutable(output, pass_payload("pass2_grounded", records))
     print(f"Wrote {len(records)} grounded rows to {output}")

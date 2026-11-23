@@ -13,19 +13,21 @@ from dotenv import load_dotenv
 from schema import AppInput, AppResult, ROOT, load_apps
 
 load_dotenv(ROOT / ".env")
-SAMPLE_NAMES = {"Stripe", "Meta Ads", "Sherlock", "DealCloud", "Notion"}
+SAMPLE_NAMES = {"Pipedrive", "Mailchimp", "Firecrawl", "Vercel", "Asana",
+                "Pinterest", "Gladly", "Mermaid CLI", "Airtable", "Brex"}
+SAMPLE_TAG = "dev10"
 
 
 def select_apps(argv: list[str] | None = None) -> tuple[list[AppInput], bool]:
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--sample", action="store_true", help="Five required checkpoint apps")
+    group.add_argument("--sample", action="store_true", help="Ten development checkpoint apps")
     group.add_argument("--app", help="One exact app name")
     args = parser.parse_args(argv)
     apps = load_apps()
     if args.sample:
         apps = [app for app in apps if app.name in SAMPLE_NAMES]
-        assert len(apps) == 5
+        assert len(apps) == 10
     elif args.app:
         apps = [app for app in apps if app.name.casefold() == args.app.casefold()]
         if len(apps) != 1:
@@ -68,8 +70,9 @@ def result_record(result: AppResult, **metadata: object) -> dict:
             "usage": {}, "errors": [], "evidence_invalid": [], **metadata}
 
 
-def path_for(stage: str, sample: bool, app: AppInput | None = None) -> Path:
-    tag = os.getenv("APP_RESEARCH_RUN_TAG", "")
+def path_for(stage: str, sample: bool, app: AppInput | None = None,
+             tag_override: str | None = None) -> Path:
+    tag = os.getenv("APP_RESEARCH_RUN_TAG", SAMPLE_TAG if sample else "") if tag_override is None else tag_override
     if tag and not re.fullmatch(r"[A-Za-z0-9_-]+", tag):
         raise ValueError("APP_RESEARCH_RUN_TAG must be letters, digits, _ or -")
     suffix = ("_sample" + (f"_{tag}" if tag else "")) if sample else f"_app_{app.id}" if app else ""

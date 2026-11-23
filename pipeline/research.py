@@ -168,13 +168,14 @@ def prompt_pages(pages: dict[str, str], max_chars: int = 9500) -> str:
     return "\n\n".join(chunks)
 
 
-def quote_bank(pages: dict[str, str], max_lines: int = 24) -> tuple[str, dict[tuple[str, str], str]]:
+def quote_bank(pages: dict[str, str], max_lines: int = 24) -> tuple[str, dict[str, tuple[str, str]]]:
     """Candidate whole lines copied from raw text, with IDs resolved after the model call."""
     keywords = ("auth", "oauth", "api key", "token", "credential", "rest api", "graphql",
                 "cli", "mcp", "review", "approval", "partner", "trial", "free", "sandbox",
                 "pricing", "public api", "sign up", "create an app")
     blocks = []
     lookup = {}
+    quote_number = 0
     for url, raw in pages.items():
         lines = [line.strip() for line in raw.splitlines()]
         candidates = []
@@ -187,16 +188,20 @@ def quote_bank(pages: dict[str, str], max_lines: int = 24) -> tuple[str, dict[tu
                 candidates.append((-score, index, line))
         unique = list(dict.fromkeys(line for _, _, line in sorted(candidates)))[:max_lines]
         if unique:
-            for index, line in enumerate(unique, 1):
-                lookup[(url, f"Q{index}")] = line
-            blocks.append("URL: " + url + "\n" + "\n".join(f"Q{index}: {line}" for index, line in enumerate(unique, 1)))
+            labelled = []
+            for line in unique:
+                quote_number += 1
+                qid = f"Q{quote_number}"
+                lookup[qid] = (url, line)
+                labelled.append(f"{qid}: {line}")
+            blocks.append("URL: " + url + "\n" + "\n".join(labelled))
     return "\n\n".join(blocks), lookup
 
 
-def resolve_quote_ids(evidence: list[Evidence], lookup: dict[tuple[str, str], str]) -> None:
+def resolve_quote_ids(evidence: list[Evidence], lookup: dict[str, tuple[str, str]]) -> None:
     for entry in evidence:
-        if re.fullmatch(r"Q\d+", entry.snippet):
-            entry.snippet = lookup.get((entry.url, entry.snippet), entry.snippet)
+        if re.fullmatch(r"Q\d+", entry.snippet) and entry.snippet in lookup:
+            entry.url, entry.snippet = lookup[entry.snippet]
 
 
 async def gather_pages(tavily: Tavily, app: AppInput,

@@ -6,7 +6,7 @@ import os
 
 import httpx
 
-from schema import AppResult, check_identity, unknown_result
+from schema import AppResult, Confidence, check_identity, unknown_result
 from pipeline.common import pass_payload, path_for, require_llm_key, result_record, select_apps, write_immutable
 from pipeline.llm import rubric_text, structured_call
 
@@ -32,6 +32,7 @@ async def run() -> None:
                                                           prompt, AppResult, f"pass1:{app.id}")
                     check_identity(result, app)
                     result.evidence = []
+                    result.confidence = Confidence.LOW  # No verifier has run.
                     return result_record(result, usage=usage)
                 except Exception as exc:
                     return result_record(unknown_result(app, f"Baseline call failed: {exc}"), errors=[str(exc)])

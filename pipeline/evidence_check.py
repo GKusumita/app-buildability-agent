@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 
-from schema import APIType, AppResult, Auth, Blocker, Confidence, EvidenceField, SelfServe, Verdict
+from schema import APIType, AppResult, Auth, Blocker, Confidence, EvidenceField, SelfServe, Tri, Verdict
 
 
 def normalise(value: str) -> str:
@@ -58,6 +58,8 @@ def set_unknown(result: AppResult, field: str) -> None:
         result.verdict = Verdict.UNIDENTIFIED
         result.blocker = Blocker.NONE
         result.blocker_note = ""
+    elif field == "app_review_required":
+        result.app_review_required = Tri.UNKNOWN
     else:
         raise ValueError(field)
     result.evidence = [entry for entry in result.evidence if entry.field.value != field]

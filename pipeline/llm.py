@@ -11,7 +11,24 @@ from pathlib import Path
 import httpx
 from pydantic import BaseModel
 
-from schema import ROOT
+from schema import AppResult, ROOT
+
+
+def normalise_app_result_payload(payload: dict) -> list[str]:
+    """Resolve mixed sentinel values before Pydantic's cross-field validation."""
+    changes = []
+    for field in ("auth_methods", "api_type"):
+        values = payload.get(field)
+        if not isinstance(values, list) or len(values) < 2:
+            continue
+        sentinels = {"unknown"}
+        if field == "auth_methods":
+            sentinels.add("none")
+        reduced = [value for value in values if value not in sentinels]
+        if reduced and len(reduced) != len(values):
+            payload[field] = reduced
+            changes.append(f"{field}: removed mixed sentinel")
+    return changes
 
 
 def strict_schema(model: type[BaseModel]) -> dict:
@@ -83,7 +100,16 @@ async def structured_call(client: httpx.AsyncClient, model: str, prompt: str,
             output_text = texts[0] if len(texts) == 1 else None
         if not isinstance(output_text, str) or not output_text.strip():
             raise RuntimeError("Expected one structured output text")
-        parsed = output_model.model_validate_json(output_text)
+        if output_model is AppResult:
+            payload = json.loads(output_text)
+            if not isinstance(payload, dict):
+                raise ValueError("Expected a JSON object")
+            changes = normalise_app_result_payload(payload)
+            if changes:
+                usage = {**usage, "schema_normalisations": changes}
+            parsed = output_model.model_validate(payload)
+        else:
+            parsed = output_model.model_validate_json(output_text)
         return parsed, usage
     except Exception as exc:
         error = str(exc)[:500]
