@@ -54,6 +54,10 @@ class Tavily:
                 payload["include_domains"] = domains
             data = await self._post("search", payload)
             path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+            for item in data.get("results", []):
+                if item.get("url"):
+                    cache_file("search_result", item["url"]).write_text(
+                        json.dumps(item, ensure_ascii=False), encoding="utf-8")
             return data
 
     async def extract(self, urls: list[str]) -> dict[str, str]:
@@ -100,7 +104,7 @@ def choose_urls(searches: list[dict], domain: str | None, limit: int = 5) -> lis
             if parsed.scheme not in {"https", "http"} or not parsed.netloc:
                 continue
             context = f"{item.get('title', '')} {url}".lower()
-            score = 3 if domain and parsed.netloc.endswith(domain) else 0
+            score = 3 if domain and (parsed.netloc == domain or parsed.netloc.endswith("." + domain)) else 0
             score += sum(word in context for word in ("auth", "getting-started", "api-key", "pricing", "developer", "mcp"))
             candidates[url] = max(score, candidates.get(url, 0))
     return sorted(candidates, key=lambda url: (-candidates[url], url))[:limit]

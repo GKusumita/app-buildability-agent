@@ -201,7 +201,7 @@ def unknown_result(app: AppInput, reason: str) -> AppResult:
         webhooks=Tri.UNKNOWN, rate_limits="unknown",
         verdict=Verdict.UNIDENTIFIED, blocker=Blocker.NONE,
         blocker_note="", evidence=[], confidence=Confidence.LOW,
-        notes=reason[:240],
+        notes=" ".join(reason[:240].split()[:40]),
     )
 
 

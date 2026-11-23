@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
   <title>App Buildability Atlas</title>
   <style>
     :root { --ink:#172329; --muted:#58666b; --paper:#f8f7f3; --line:#d8dedb; --teal:#0f645a; --amber:#9b5c0a; --red:#9b3d32; --blue:#345a7f; }
@@ -75,7 +76,7 @@
   <section id="agent"><div class="wrap"><div class="eyebrow">03 / Method</div><h2>The agent</h2><p class="section-intro">Four checkpoints keep model knowledge, sourced research, independent review, and human judgement separate.</p><div class="pipeline"><div class="step"><b>PASS 1 →</b><h3>Baseline</h3><p>One structured answer per app, with no retrieval and no citations.</p></div><div class="step"><b>PASS 2 →</b><h3>Research</h3><p>Search, extract, cite verbatim snippets, and reject invalid evidence.</p></div><div class="step"><b>PASS 3 →</b><h3>Verify</h3><p>Review each key claim independently and retry unsupported fields once.</p></div><div class="step"><b>HUMAN</b><h3>Decide</h3><p>Resolve remaining ambiguity and label the blind gold sample.</p></div></div><h3>Where a human was needed</h3><div id="human-queue" class="compact"></div></div></section>
   <section id="verification"><div class="wrap"><div class="eyebrow">04 / Evaluation</div><h2>Verification</h2><p class="section-intro">Accuracy is measured on 25 blind human-labelled apps. Raw counts appear beside percentages because the sample is small.</p><div id="accuracy"></div><h3>Hits and misses</h3><div id="misses" class="compact"></div></div></section>
   <section id="failures"><div class="wrap"><div class="eyebrow">05 / Limits</div><h2>What defeated the agent</h2><div id="failures-body" class="compact"></div></div></section>
-  <section id="proof"><div class="wrap"><div class="eyebrow">06 / Proof</div><h2>Run it</h2><p class="section-intro">The project contains source, cached evidence, immutable pass outputs, a scoring gate, and this static report.</p><div id="links" class="compact"></div><p><code>python run.py --app "Stripe"</code></p><p class="small" id="composio"></p><p><a href="results.json">Download machine-readable results.json</a>. This page also embeds the same JSON in <code>&lt;script id="data"&gt;</code>.</p></div></section>
+  <section id="proof"><div class="wrap"><div class="eyebrow">06 / Proof</div><h2>Run it</h2><p class="section-intro">The source generates cached evidence, immutable pass outputs, scoring, and this static report.</p><div id="links" class="compact"></div><p><code>python run.py --app "Stripe"</code></p><p class="small" id="composio"></p><p><a href="results.json">Download machine-readable results.json</a>. This page also embeds the same JSON in <code>&lt;script id="data"&gt;</code>.</p></div></section>
 </main><footer><div class="wrap">App Buildability Atlas · Evidence and uncertainty shown together.</div></footer>
 <script type="application/json" id="data">__DATA_JSON__</script>
 <script>

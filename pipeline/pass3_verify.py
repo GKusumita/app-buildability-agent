@@ -5,7 +5,7 @@ import asyncio
 import json
 import os
 from collections import defaultdict
-from pathlib import Path
+from typing import Literal
 
 import httpx
 from pydantic import BaseModel, ConfigDict
@@ -21,7 +21,7 @@ from pipeline.research import Tavily, gather_pages, prompt_pages, cache_file
 
 class Check(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    status: str  # Explicitly checked against four values after parsing.
+    status: Literal["supported", "unsupported", "contradicted", "insufficient_evidence"]
     reason: str
 
 
