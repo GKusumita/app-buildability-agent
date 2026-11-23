@@ -79,7 +79,7 @@ class CoreTests(unittest.TestCase):
                 await tavily.search("Example API")
                 await tavily.extract(["https://docs.example.com/auth"])
                 await tavily.extract(["https://docs.example.com/auth"])
-                self.assertTrue((Path(directory) / "cache").glob("search_result-*.json"))
+                self.assertEqual(len(list((Path(directory) / "cache").glob("search_result-*.json"))), 1)
             self.assertEqual(len(client.calls), 2)
         asyncio.run(work())
 

@@ -23,6 +23,7 @@ def main() -> None:
     accuracy = read_json(ROOT / "data" / "accuracy.json")
     patterns = read_json(ROOT / "data" / "patterns.json")
     queue = read_json(ROOT / "data" / "human_queue.json")
+    delivery = read_json(ROOT / "data" / "composio_delivery.json")
     apps = load_apps()
     rows = {row["result"]["id"]: row for row in final["records"]} if final else {}
     results = []
@@ -46,7 +47,7 @@ def main() -> None:
         "results": results, "patterns": patterns, "accuracy": accuracy,
         "human_queue": queue["apps"] if queue else [], "misses": misses,
         "repo_url": os.getenv("REPO_URL", ""), "deploy_url": os.getenv("DEPLOY_URL", ""),
-        "composio_status": "optional delivery not configured" if not os.getenv("COMPOSIO_SHEET_ID") else "configured; see run logs",
+        "composio_status": f"delivered {delivery['rows']} rows" if delivery else "optional delivery not run",
     }
     site = ROOT / "site"
     (site / "results.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")

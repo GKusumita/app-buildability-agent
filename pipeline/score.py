@@ -47,14 +47,17 @@ def main() -> None:
                    for record in read_pass(path)["records"]}
         counts = Counter()
         matrix: dict[str, Counter] = defaultdict(Counter)
+        hits = []
         for truth in gold:
             if truth["id"] not in records:
                 raise SystemExit(f"{stage} is missing gold app {truth['id']}")
             prediction = records[truth["id"]]
+            app_correct = True
             for field in FIELDS:
                 actual = normalize(field, truth[field])
                 predicted = normalize(field, getattr(prediction, field))
                 correct = actual == predicted
+                app_correct &= correct
                 counts[field] += int(correct)
                 if not correct:
                     misses.append({"pass": stage, "id": truth["id"], "name": truth["name"],
@@ -62,6 +65,8 @@ def main() -> None:
                                    "prediction": "|".join(sorted(predicted)) if isinstance(predicted, frozenset) else predicted,
                                    "cause": ""})
             matrix[str(truth["verdict"])][prediction.verdict.value] += 1
+            if app_correct:
+                hits.append(truth["name"])
         metrics[stage] = {
             "n": len(gold), "per_field": {field: {"correct": counts[field], "total": len(gold),
                                            "percent": round(100 * counts[field] / len(gold), 1)} for field in FIELDS},
@@ -70,6 +75,7 @@ def main() -> None:
             "verdict_accuracy": {"correct": counts["verdict"], "total": len(gold),
                                  "percent": round(100 * counts["verdict"] / len(gold), 1)},
             "verdict_confusion": {key: dict(value) for key, value in matrix.items()},
+            "all_fields_correct_apps": hits,
         }
     output = ROOT / "data" / "accuracy.json"
     errors_path = ROOT / "data" / "errors.csv"

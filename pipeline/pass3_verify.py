@@ -71,7 +71,7 @@ def verification_prompt(result: AppResult, pages: dict[str, str], field: str | N
 
 async def verify(client: httpx.AsyncClient, result: AppResult, pages: dict[str, str],
                  label: str, field: str | None = None) -> tuple[Verification, dict]:
-    model = os.getenv("OPENAI_VERIFY_MODEL", os.getenv("OPENAI_MODEL", "gpt-4.1-mini"))
+    model = os.getenv("OPENAI_VERIFY_MODEL", "gpt-4.1")
     parsed, usage = await structured_call(client, model, verification_prompt(result, pages, field),
                                           Verification, label)
     for name in CLAIM_FIELDS:
@@ -108,12 +108,16 @@ def consistency(result: AppResult) -> tuple[AppResult, str | None]:
     if (result.verdict, result.blocker) == expected:
         return result, None
     old = f"{result.verdict.value}/{result.blocker.value}"
-    result.verdict, result.blocker = expected
-    result.blocker_note = "" if expected[1] == Blocker.NONE else f"Rubric requires {expected[1].value} based on verified fields."
-    result.evidence = [item for item in result.evidence if item.field.value != "verdict"]
-    # A derived verdict needs its own cited support; queue it for human review.
+    if result.verdict == expected[0]:
+        result.blocker = expected[1]
+        result.blocker_note = "" if expected[1] == Blocker.NONE else f"Rubric requires {expected[1].value} based on verified fields."
+        issue = f"Re-derived blocker from {old} to {expected[0].value}/{expected[1].value}"
+    else:
+        # A derived verdict without a supporting citation would violate the evidence contract.
+        set_unknown(result, "verdict")
+        issue = f"Rubric derives {expected[0].value}/{expected[1].value} from other fields; previous {old} needs human review"
     result.confidence = Confidence.LOW
-    return result, f"Re-derived {old} to {expected[0].value}/{expected[1].value}; verdict citation needs human review"
+    return result, issue
 
 
 def targeted_queries(app_name: str, field: str) -> list[tuple[str, None]]:
