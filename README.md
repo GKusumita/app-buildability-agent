@@ -59,7 +59,7 @@ The single-app outputs use that app's ID in the filenames; existing files are pr
 
 ## Blind gold scoring
 
-`gold/gold_template.csv` contains 25 app identities and empty label fields. A human must read real docs and fill a copy named `gold/gold.csv` **before looking at the agent outputs**. Use `|` to separate multiple `auth_methods` or `api_type` values; enter `exists` or `not_exists` for `official_mcp`. This project never generates labels. Two proposed apps were swapped to meet the minimum of two per category: **Otter AI → Intercom** and **Plaid → Vercel**. All 10 categories now have at least two apps.
+`gold/gold_template.csv` contains 25 app identities and empty label fields. A human must read real docs and fill a copy named `gold/gold.csv` **before looking at the agent outputs**. Use `|` to separate multiple `auth_methods` or `api_type` values; enter `exists` or `not_exists` for `official_mcp`. This project never generates labels. The template excludes both development checkpoints, and all 10 categories have at least two apps. Keep the six newly selected holdout apps out of further tuning.
 
 After the three full passes and human labels exist:
 
