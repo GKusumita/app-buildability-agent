@@ -7,18 +7,28 @@ from schema import AppResult, ROOT
 from pipeline.common import read_pass, write_immutable
 
 
+def access_group(value: str) -> str:
+    if value in {"free_self_serve", "trial_self_serve"}:
+        return "self_serve"
+    if value in {"paid_required", "admin_approval", "partner_gated", "contact_sales"}:
+        return "gated"
+    return "other_or_unknown"
+
+
 def compute(results: list[AppResult]) -> dict:
     total = len(results)
     auth = Counter(method.value for result in results for method in result.auth_methods)
     self_serve = Counter(result.self_serve.value for result in results)
     verdicts = Counter(result.verdict.value for result in results)
     blockers = Counter(result.blocker.value for result in results if result.blocker.value != "none")
+    access = Counter(access_group(result.self_serve.value) for result in results)
     by_category = {}
     for category in sorted({result.category.value for result in results}):
         subset = [result for result in results if result.category.value == category]
         by_category[category] = {
             "total": len(subset),
             "self_serve": dict(Counter(row.self_serve.value for row in subset)),
+            "access_summary": dict(Counter(access_group(row.self_serve.value) for row in subset)),
             "blockers": dict(Counter(row.blocker.value for row in subset if row.blocker.value != "none")),
         }
     oauth = {row.id for row in results if "oauth2" in [method.value for method in row.auth_methods]}
@@ -34,8 +44,13 @@ def compute(results: list[AppResult]) -> dict:
     return {
         "total": total, "auth_distribution": dict(auth),
         "oauth2": len(oauth), "api_key": len(api_key), "both": len(oauth & api_key),
-        "self_serve": dict(self_serve), "verdicts": dict(verdicts),
-        "blockers": dict(blockers), "by_category": by_category,
+        "oauth2_share": round(len(oauth) / total, 3) if total else 0,
+        "api_key_share": round(len(api_key) / total, 3) if total else 0,
+        "both_share": round(len(oauth & api_key) / total, 3) if total else 0,
+        "self_serve": dict(self_serve), "access_summary": dict(access),
+        "verdicts": dict(verdicts),
+        "blockers": dict(blockers), "top_blocker": blockers.most_common(1)[0][0] if blockers else "none",
+        "by_category": by_category,
         "easy_wins": easy, "outreach": dict(outreach), "official_mcp": mcp,
         "unknown_counts": {
             "auth_methods": auth["unknown"],
