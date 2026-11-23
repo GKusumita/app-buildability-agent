@@ -38,10 +38,15 @@ class Tavily:
     async def _post(self, route: str, payload: dict) -> dict:
         if not self.key:
             raise RuntimeError("TAVILY_API_KEY is missing")
-        response = await self.client.post(f"https://api.tavily.com/{route}", json=payload,
-                                          headers={"Authorization": f"Bearer {self.key}"}, timeout=90)
-        response.raise_for_status()
-        return response.json()
+        for attempt in range(1, 4):
+            response = await self.client.post(f"https://api.tavily.com/{route}", json=payload,
+                                              headers={"Authorization": f"Bearer {self.key}"}, timeout=90)
+            if response.status_code in {429, 500, 502, 503, 504} and attempt < 3:
+                await asyncio.sleep(2 ** attempt)
+                continue
+            response.raise_for_status()
+            return response.json()
+        raise RuntimeError("Tavily request exhausted retries")
 
     async def search(self, query: str, domains: list[str] | None = None) -> dict:
         cache_key = json.dumps({"query": query, "domains": domains or []}, sort_keys=True)

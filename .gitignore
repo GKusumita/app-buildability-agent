@@ -7,7 +7,7 @@ cache/*
 !cache/.gitkeep
 logs/*
 !logs/.gitkeep
-data/*_sample.json
+data/*_sample*.json
 data/*_app_*.json
 gold/gold.csv
 site/index.html

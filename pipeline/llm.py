@@ -1,6 +1,7 @@
 """Strict JSON output via OpenRouter or OpenAI, with call logs."""
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import os
@@ -54,10 +55,16 @@ async def structured_call(client: httpx.AsyncClient, model: str, prompt: str,
                 "text": {"format": {"type": "json_schema", **format_schema}}}
     usage: dict = {}
     error = ""
+    attempts = 0
     try:
-        response = await client.post(endpoint, json=body,
-                                     headers={"Authorization": f"Bearer {key}"}, timeout=120)
-        response.raise_for_status()
+        for attempts in range(1, 4):
+            response = await client.post(endpoint, json=body,
+                                         headers={"Authorization": f"Bearer {key}"}, timeout=120)
+            if response.status_code in {429, 500, 502, 503, 504} and attempts < 3:
+                await asyncio.sleep(2 ** attempts)
+                continue
+            response.raise_for_status()
+            break
         data = response.json()
         usage = data.get("usage", {})
         if provider == "openrouter":
@@ -84,7 +91,7 @@ async def structured_call(client: httpx.AsyncClient, model: str, prompt: str,
     finally:
         log = {"at": datetime.now(timezone.utc).isoformat(), "label": label,
                "prompt_sha256": prompt_hash, "provider": provider,
-               "model": actual_model, "usage": usage, "error": error}
+               "model": actual_model, "usage": usage, "attempts": attempts, "error": error}
         with (ROOT / "logs" / "llm.jsonl").open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(log, ensure_ascii=False) + "\n")
 
