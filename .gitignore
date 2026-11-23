@@ -1,0 +1,15 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+cache/*
+!cache/.gitkeep
+logs/*
+!logs/.gitkeep
+data/*.json
+data/*.csv
+!data/.gitkeep
+gold/gold.csv
+site/index.html
+site/results.json
+
