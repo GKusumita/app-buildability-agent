@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>App Buildability Atlas</title>
+  <style>
+    :root { --ink:#172329; --muted:#58666b; --paper:#f8f7f3; --line:#d8dedb; --teal:#0f645a; --amber:#9b5c0a; --red:#9b3d32; --blue:#345a7f; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif; }
+    a { color:var(--teal); text-underline-offset:3px; }
+    button,input,select { font:inherit; }
+    .wrap { max-width:1180px; margin:auto; padding:0 28px; }
+    header { border-bottom:1px solid var(--line); background:#fbfbf8; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:16px 0; }
+    .brand { font-size:13px; letter-spacing:.12em; text-transform:uppercase; font-weight:750; }
+    nav { display:flex; flex-wrap:wrap; gap:16px; font-size:13px; }
+    .hero { padding:62px 0 52px; border-bottom:1px solid var(--line); }
+    .eyebrow { color:var(--teal); font-weight:750; font-size:12px; letter-spacing:.15em; text-transform:uppercase; }
+    h1,h2,h3 { font-family:Georgia,serif; font-weight:500; letter-spacing:-.035em; }
+    h1 { font-size:clamp(44px,6vw,74px); line-height:1.02; margin:15px 0 20px; max-width:900px; }
+    h2 { font-size:38px; line-height:1.12; margin:0 0 12px; }
+    h3 { font-size:22px; margin:0 0 8px; }
+    .lede { max-width:700px; color:var(--muted); font-size:18px; }
+    .status { display:inline-block; margin-top:18px; border:1px solid var(--line); background:white; padding:7px 11px; font-size:13px; }
+    section { padding:56px 0; border-bottom:1px solid var(--line); }
+    .section-intro { color:var(--muted); max-width:760px; margin:0 0 25px; }
+    .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:26px; }
+    .stat { background:white; border:1px solid var(--line); padding:20px; min-height:128px; }
+    .stat strong { display:block; font-family:Georgia,serif; font-size:35px; font-weight:500; line-height:1.1; }
+    .stat span { display:block; color:var(--muted); margin-top:10px; }
+    .controls { display:flex; flex-wrap:wrap; gap:10px; margin:24px 0 14px; }
+    select,input[type=search] { background:white; border:1px solid #b9c5c0; padding:9px 11px; border-radius:0; min-height:40px; }
+    input[type=search] { flex:1 1 220px; }
+    .table-wrap { overflow-x:auto; border:1px solid var(--line); background:white; }
+    table { width:100%; border-collapse:collapse; text-align:left; }
+    th,td { border-bottom:1px solid var(--line); padding:12px 14px; vertical-align:top; }
+    th { position:sticky; top:0; background:#eff2ef; white-space:nowrap; font-size:12px; text-transform:uppercase; letter-spacing:.07em; color:#46565a; cursor:pointer; }
+    tr:last-child td { border-bottom:0; }
+    tbody tr.row { cursor:pointer; }
+    tbody tr.row:hover { background:#f5f8f6; }
+    .chip { display:inline-block; padding:3px 8px; font-size:12px; font-weight:650; border:1px solid currentColor; white-space:nowrap; }
+    .buildable_now { color:var(--teal); background:#edf7f2; }
+    .buildable_with_outreach { color:var(--amber); background:#fff5e5; }
+    .blocked { color:var(--red); background:#fff0ec; }
+    .not_applicable { color:var(--blue); background:#eef3f7; }
+    .could_not_identify,.pending { color:#626a6a; background:#f0f1ee; }
+    .detail { background:#f7f8f5; padding:16px 20px; border-bottom:1px solid var(--line); }
+    .detail p { margin:0 0 7px; }
+    .evidence-list { padding-left:20px; margin:8px 0 0; }
+    .evidence-list li { margin-bottom:10px; }
+    .snippet { color:#4d5b5d; font-size:13px; display:block; max-width:850px; }
+    .pipeline { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:24px 0; }
+    .step { background:white; border:1px solid var(--line); padding:17px; }
+    .step b { display:block; color:var(--teal); font-size:12px; margin-bottom:12px; letter-spacing:.08em; }
+    .step p { margin:0; color:var(--muted); }
+    .callout { border-left:3px solid var(--teal); padding:12px 18px; background:#edf3ef; margin:20px 0; }
+    .compact { max-width:780px; }
+    .empty { color:var(--muted); padding:15px 0; }
+    .small { font-size:13px; color:var(--muted); }
+    .list { padding-left:21px; }
+    .list li { margin:6px 0; }
+    code { font-family:Consolas,monospace; background:#e9eeea; padding:3px 5px; font-size:13px; }
+    footer { padding:30px 0 60px; color:var(--muted); font-size:13px; }
+    @media(max-width:760px) { .wrap{padding:0 17px} nav{display:none} .hero{padding:40px 0} h2{font-size:32px} .stats,.pipeline{grid-template-columns:1fr} th,td{padding:10px 9px} section{padding:40px 0} }
+  </style>
+</head>
+<body>
+<header><div class="wrap topbar"><div class="brand">App Buildability Atlas</div><nav><a href="#patterns">Patterns</a><a href="#matrix">100 apps</a><a href="#agent">The agent</a><a href="#verification">Verification</a><a href="#proof">Run it</a></nav></div></header>
+<main>
+  <div class="wrap hero"><div class="eyebrow">Evidence-led API access research</div><h1>Which apps can an agent actually build with?</h1><p class="lede">A 100-app research pipeline checks public API access, credentials, review gates, and cited documentation. Every confident claim should be traceable to a fetched page.</p><div class="status" id="run-status"></div></div>
+  <section id="patterns"><div class="wrap"><div class="eyebrow">01 / Patterns</div><h2>What the evidence says</h2><p class="section-intro">Counts come from the verified final pass. Pending research has no inferred totals.</p><div class="stats" id="stats"></div><div id="pattern-detail" class="compact"></div></div></section>
+  <section id="matrix"><div class="wrap"><div class="eyebrow">02 / Matrix</div><h2>The 100 apps</h2><p class="section-intro">Filter or sort the rows. Select an app to read the cited snippets and open the source pages.</p><div class="controls"><input id="search" type="search" placeholder="Search app name" aria-label="Search apps"><select id="category" aria-label="Category"><option value="">All categories</option></select><select id="verdict" aria-label="Verdict"><option value="">All verdicts</option></select><select id="auth" aria-label="Authentication"><option value="">All auth methods</option></select></div><p class="small" id="row-count"></p><div class="table-wrap"><table><thead><tr><th data-sort="name">App ↕</th><th data-sort="category">Category ↕</th><th data-sort="verdict">Verdict ↕</th><th data-sort="auth_methods">Auth ↕</th><th data-sort="confidence">Confidence ↕</th></tr></thead><tbody id="rows"></tbody></table></div></div></section>
+  <section id="agent"><div class="wrap"><div class="eyebrow">03 / Method</div><h2>The agent</h2><p class="section-intro">Four checkpoints keep model knowledge, sourced research, independent review, and human judgement separate.</p><div class="pipeline"><div class="step"><b>PASS 1 →</b><h3>Baseline</h3><p>One structured answer per app, with no retrieval and no citations.</p></div><div class="step"><b>PASS 2 →</b><h3>Research</h3><p>Search, extract, cite verbatim snippets, and reject invalid evidence.</p></div><div class="step"><b>PASS 3 →</b><h3>Verify</h3><p>Review each key claim independently and retry unsupported fields once.</p></div><div class="step"><b>HUMAN</b><h3>Decide</h3><p>Resolve remaining ambiguity and label the blind gold sample.</p></div></div><h3>Where a human was needed</h3><div id="human-queue" class="compact"></div></div></section>
+  <section id="verification"><div class="wrap"><div class="eyebrow">04 / Evaluation</div><h2>Verification</h2><p class="section-intro">Accuracy is measured on 25 blind human-labelled apps. Raw counts appear beside percentages because the sample is small.</p><div id="accuracy"></div><h3>Hits and misses</h3><div id="misses" class="compact"></div></div></section>
+  <section id="failures"><div class="wrap"><div class="eyebrow">05 / Limits</div><h2>What defeated the agent</h2><div id="failures-body" class="compact"></div></div></section>
+  <section id="proof"><div class="wrap"><div class="eyebrow">06 / Proof</div><h2>Run it</h2><p class="section-intro">The project contains source, cached evidence, immutable pass outputs, a scoring gate, and this static report.</p><div id="links" class="compact"></div><p><code>python run.py --app "Stripe"</code></p><p class="small" id="composio"></p><p><a href="results.json">Download machine-readable results.json</a>. This page also embeds the same JSON in <code>&lt;script id="data"&gt;</code>.</p></div></section>
+</main><footer><div class="wrap">App Buildability Atlas · Evidence and uncertainty shown together.</div></footer>
+<script type="application/json" id="data">__DATA_JSON__</script>
+<script>
+(() => {
+  const d = JSON.parse(document.getElementById('data').textContent);
+  const $ = id => document.getElementById(id);
+  const el = (tag, text, cls) => { const node=document.createElement(tag); if(text!==undefined) node.textContent=String(text); if(cls) node.className=cls; return node; };
+  const label = value => String(value ?? 'unknown').replaceAll('_',' ');
+  $('run-status').textContent = `${d.verified_apps}/${d.total_apps} apps verified · ${d.status === 'complete' ? 'final pass available' : 'research pending'}`;
+  const stats = $('stats');
+  const cards = d.patterns ? [
+    [`${d.patterns.verdicts.buildable_now || 0}/${d.patterns.total}`, 'Buildable now'],
+    [`${d.patterns.verdicts.buildable_with_outreach || 0}/${d.patterns.total}`, 'Need outreach or review'],
+    [`${d.patterns.unknown_counts.could_not_identify || 0}/${d.patterns.total}`, 'Could not identify confidently']
+  ] : [[`${d.verified_apps}/${d.total_apps}`,'Verified rows'],['—','Patterns pending final pass'],['—','No accuracy claimed yet']];
+  cards.forEach(([n,t]) => { const card=el('div',undefined,'stat'); card.append(el('strong',n),el('span',t)); stats.append(card); });
+  if(d.patterns) {
+    const p=d.patterns;
+    $('pattern-detail').append(el('p',`${p.oauth2}/${p.total} support OAuth2; ${p.api_key}/${p.total} support API keys; ${p.both}/${p.total} support both.`));
+    $('pattern-detail').append(el('p',`${p.easy_wins.length}/${p.total} are easy wins under the rubric. ${p.official_mcp.length}/${p.total} have an identified official MCP URL.`));
+  } else $('pattern-detail').append(el('p','Final-pass analysis is pending.','empty'));
+  const rows = d.results.map(x=>x.result);
+  const unique = key => [...new Set(rows.map(r=>r[key]))].sort();
+  unique('category').forEach(x=>$('category').append(new Option(x,x)));
+  unique('verdict').forEach(x=>$('verdict').append(new Option(label(x),x)));
+  [...new Set(rows.flatMap(r=>r.auth_methods || []))].sort().forEach(x=>$('auth').append(new Option(label(x),x)));
+  let sort='name', ascending=true;
+  document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{ const next=th.dataset.sort; ascending=next===sort ? !ascending:true; sort=next; render(); }));
+  ['search','category','verdict','auth'].forEach(id=>$(id).addEventListener('input',render));
+  function render() {
+    const q=$('search').value.trim().toLowerCase(), c=$('category').value, v=$('verdict').value, a=$('auth').value;
+    const filtered=d.results.filter(({result:r}) => (!q || r.name.toLowerCase().includes(q)) && (!c || r.category===c) && (!v || r.verdict===v) && (!a || (r.auth_methods||[]).includes(a)));
+    filtered.sort((x,y)=>{const A=String(x.result[sort] ?? ''), B=String(y.result[sort] ?? ''); return (ascending?1:-1)*A.localeCompare(B);});
+    $('row-count').textContent=`${filtered.length}/${d.total_apps} apps shown`;
+    const body=$('rows'); body.replaceChildren();
+    filtered.forEach(record => {
+      const r=record.result, tr=el('tr',undefined,'row'); tr.tabIndex=0;
+      tr.append(el('td',r.name),el('td',r.category));
+      const verdict=el('td'); verdict.append(el('span',label(r.verdict),'chip '+r.verdict)); tr.append(verdict);
+      tr.append(el('td',(r.auth_methods||[]).map(label).join(', ') || '—'),el('td',label(r.confidence)));
+      const detailRow=el('tr'); detailRow.hidden=true; const td=el('td'); td.colSpan=5; td.className='detail';
+      td.append(el('p',r.one_liner || 'Research has not run for this app.'));
+      if(r.blocker_note) td.append(el('p','Blocker: '+r.blocker_note));
+      if(r.notes) td.append(el('p','Notes: '+r.notes));
+      const list=el('ul',undefined,'evidence-list');
+      (r.evidence||[]).forEach(e=>{const li=el('li'); const link=el('a',label(e.field)+' · '+e.url); link.href=e.url; link.target='_blank'; link.rel='noopener noreferrer'; li.append(link,el('span','“'+e.snippet+'”','snippet')); list.append(li);});
+      td.append((r.evidence||[]).length ? list : el('p','No validated evidence yet.','small'));
+      if(record.evidence_invalid?.length) td.append(el('p',`${record.evidence_invalid.length} citation(s) failed validation.`,'small'));
+      detailRow.append(td);
+      const toggle=()=>{detailRow.hidden=!detailRow.hidden}; tr.addEventListener('click',toggle); tr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+      body.append(tr,detailRow);
+    });
+  }
+  render();
+  const queue=$('human-queue');
+  if(d.human_queue.length){const ul=el('ul',undefined,'list');d.human_queue.forEach(x=>ul.append(el('li',`${x.name}: ${x.reasons.join('; ')}`)));queue.append(ul);}else queue.append(el('p',d.status==='complete'?'No apps were queued.':'Human review queue pending final pass.','empty'));
+  const accuracy=$('accuracy');
+  if(d.accuracy){const table=el('table');const head=el('thead');const hr=el('tr');['Pass','Overall fields','Verdict'].forEach(t=>hr.append(el('th',t)));head.append(hr);table.append(head);const tb=el('tbody');['pass1','pass2','pass3'].forEach(key=>{const m=d.accuracy.passes[key], tr=el('tr');tr.append(el('td',key),el('td',`${m.overall.correct}/${m.overall.total} (${m.overall.percent}%)`),el('td',`${m.verdict_accuracy.correct}/${m.verdict_accuracy.total} (${m.verdict_accuracy.percent}%)`));tb.append(tr)});table.append(tb);const wrap=el('div',undefined,'table-wrap');wrap.append(table);accuracy.append(wrap);const p=d.accuracy.passes;accuracy.append(el('p',`Verdict accuracy delta, pass 1 → pass 3: ${p.pass3.verdict_accuracy.correct-p.pass1.verdict_accuracy.correct}/25 apps.`,'small'));}
+  else accuracy.append(el('p','Accuracy pending a blind, human-labelled gold.csv and three full pass outputs.','callout'));
+  const misses=$('misses');
+  if(d.misses.length){const ul=el('ul',undefined,'list');d.misses.slice(0,35).forEach(m=>ul.append(el('li',`${m.pass} · ${m.name} · ${m.field}: predicted ${m.prediction}, gold ${m.gold}. Cause: ${m.cause || 'awaiting human analysis'}.`)));misses.append(ul);if(d.misses.length>35)misses.append(el('p',`Showing 35/${d.misses.length} misses; see data/errors.csv.`,'small'));}
+  else misses.append(el('p',d.accuracy?'No field misses in the scored sample.':'Hits and misses pending scoring.','empty'));
+  const failures=$('failures-body');
+  if(d.patterns){const u=d.patterns.unknown_counts;failures.append(el('p',`${u.auth_methods}/${d.patterns.total} unknown auth; ${u.self_serve}/${d.patterns.total} unknown access; ${u.api_type}/${d.patterns.total} unknown API type; ${u.could_not_identify}/${d.patterns.total} could not be identified; ${u.not_applicable}/${d.patterns.total} not applicable.`));}
+  else failures.append(el('p','Failure analysis waits for the final pass. The absence of a result is shown as pending in the matrix.','empty'));
+  const links=$('links');
+  if(d.repo_url){const a=el('a','Source repository');a.href=d.repo_url;links.append(a,el('br'));}else links.append(el('p','Repository URL pending publication.'));
+  if(d.deploy_url){const a=el('a','Deployed report');a.href=d.deploy_url;links.append(a);}else links.append(el('p','Deployment URL pending publication.'));
+  $('composio').textContent='Composio delivery: '+d.composio_status+'.';
+})();
+</script>
+</body></html>
