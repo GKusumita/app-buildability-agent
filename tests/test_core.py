@@ -12,12 +12,13 @@ from pydantic import ValidationError
 from schema import (APIType, AppResult, Auth, Breadth, Confidence, Evidence,
                     SelfServe, Tri, Verdict, load_apps, unknown_result)
 from pipeline.evidence_check import validate_evidence
+from pipeline.common import path_for
 from pipeline.llm import model_for, normalise_app_result_payload, provider_config, structured_call
 from pipeline.pass3_verify import (Check, Verification, compute_confidence,
                                    consistency, unknown_fields, verify)
 from pipeline.research import Tavily, quote_bank, resolve_quote_ids
 from pipeline.rules import apply_rule2, constrain_official_mcp
-from pipeline.score import label_issues
+from pipeline.score import TUNED_APPS, exclude_tuned, label_issues, normalize
 
 
 class FakeResponse:
@@ -65,6 +66,22 @@ class CoreTests(unittest.TestCase):
         issues = label_issues([row])
         self.assertTrue(any("self_serve" in issue for issue in issues))
         self.assertTrue(any("verdict" in issue for issue in issues))
+
+    def test_scoring_excludes_all_six_tuned_apps(self):
+        rows = [{"name": name} for name in sorted(TUNED_APPS)] + [{"name": "Pipedrive"}]
+        self.assertEqual([row["name"] for row in exclude_tuned(rows)], ["Pipedrive"])
+        self.assertEqual(len(TUNED_APPS), 6)
+
+    def test_unconfirmed_mcp_is_not_scored_as_not_exists(self):
+        self.assertEqual(normalize("official_mcp", "unknown"), "unconfirmed")
+        self.assertEqual(normalize("official_mcp", "unconfirmed"), "unconfirmed")
+        self.assertEqual(normalize("official_mcp", "none"), "none")
+
+    def test_single_app_run_tag_keeps_old_output_name_available(self):
+        self.assertEqual(path_for("pass2", False, self.app, "retry2").name,
+                         f"pass2_app_{self.app.id}_retry2.json")
+        self.assertEqual(path_for("pass2", False, self.app, "").name,
+                         f"pass2_app_{self.app.id}.json")
 
     def test_verbatim_evidence_fails_closed(self):
         url = "https://docs.example.com/auth"

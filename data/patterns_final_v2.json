@@ -1,0 +1,473 @@
+{
+  "total": 100,
+  "auth_distribution": {
+    "oauth2": 68,
+    "jwt": 9,
+    "api_key": 53,
+    "other": 5,
+    "basic": 13,
+    "bearer_token": 23,
+    "unknown": 7,
+    "none": 3
+  },
+  "oauth2": 68,
+  "api_key": 53,
+  "both": 40,
+  "oauth2_share": 0.68,
+  "api_key_share": 0.53,
+  "both_share": 0.4,
+  "self_serve": {
+    "free_self_serve": 65,
+    "trial_self_serve": 22,
+    "unknown": 9,
+    "partner_gated": 2,
+    "contact_sales": 1,
+    "not_applicable": 1
+  },
+  "access_summary": {
+    "self_serve": 87,
+    "other_or_unknown": 10,
+    "gated": 3
+  },
+  "verdicts": {
+    "buildable_with_outreach": 20,
+    "unresolved": 20,
+    "buildable_now": 56,
+    "not_applicable": 2,
+    "blocked": 2
+  },
+  "blockers": {
+    "app_review": 17,
+    "partner_gated": 2,
+    "no_public_api": 3,
+    "enterprise_only": 1
+  },
+  "top_blocker": "app_review",
+  "by_category": {
+    "AI Research and Media-native": {
+      "total": 10,
+      "self_serve": {
+        "trial_self_serve": 2,
+        "unknown": 2,
+        "free_self_serve": 5,
+        "not_applicable": 1
+      },
+      "access_summary": {
+        "self_serve": 7,
+        "other_or_unknown": 3
+      },
+      "blockers": {}
+    },
+    "CRM and Sales": {
+      "total": 10,
+      "self_serve": {
+        "free_self_serve": 7,
+        "trial_self_serve": 2,
+        "unknown": 1
+      },
+      "access_summary": {
+        "self_serve": 9,
+        "other_or_unknown": 1
+      },
+      "blockers": {
+        "app_review": 1
+      }
+    },
+    "Communications and Messaging": {
+      "total": 10,
+      "self_serve": {
+        "free_self_serve": 9,
+        "trial_self_serve": 1
+      },
+      "access_summary": {
+        "self_serve": 10
+      },
+      "blockers": {
+        "app_review": 2
+      }
+    },
+    "Data, SEO and Scraping": {
+      "total": 10,
+      "self_serve": {
+        "trial_self_serve": 3,
+        "free_self_serve": 4,
+        "unknown": 2,
+        "partner_gated": 1
+      },
+      "access_summary": {
+        "self_serve": 7,
+        "other_or_unknown": 2,
+        "gated": 1
+      },
+      "blockers": {
+        "no_public_api": 1,
+        "partner_gated": 1
+      }
+    },
+    "Developer, Infra and Data platforms": {
+      "total": 10,
+      "self_serve": {
+        "free_self_serve": 10
+      },
+      "access_summary": {
+        "self_serve": 10
+      },
+      "blockers": {
+        "no_public_api": 1
+      }
+    },
+    "Ecommerce": {
+      "total": 10,
+      "self_serve": {
+        "free_self_serve": 7,
+        "unknown": 2,
+        "trial_self_serve": 1
+      },
+      "access_summary": {
+        "self_serve": 8,
+        "other_or_unknown": 2
+      },
+      "blockers": {
+        "app_review": 3
+      }
+    },
+    "Finance and Fintech": {
+      "total": 10,
+      "self_serve": {
+        "free_self_serve": 7,
+        "trial_self_serve": 2,
+        "contact_sales": 1
+      },
+      "access_summary": {
+        "self_serve": 9,
+        "gated": 1
+      },
+      "blockers": {
+        "app_review": 3,
+        "no_public_api": 1,
+        "enterprise_only": 1
+      }
+    },
+    "Marketing, Ads, Email and Social": {
+      "total": 10,
+      "self_serve": {
+        "trial_self_serve": 5,
+        "partner_gated": 1,
+        "free_self_serve": 4
+      },
+      "access_summary": {
+        "self_serve": 9,
+        "gated": 1
+      },
+      "blockers": {
+        "app_review": 5,
+        "partner_gated": 1
+      }
+    },
+    "Productivity and Project Management": {
+      "total": 10,
+      "self_serve": {
+        "free_self_serve": 8,
+        "trial_self_serve": 2
+      },
+      "access_summary": {
+        "self_serve": 10
+      },
+      "blockers": {
+        "app_review": 1
+      }
+    },
+    "Support and Helpdesk": {
+      "total": 10,
+      "self_serve": {
+        "free_self_serve": 4,
+        "trial_self_serve": 4,
+        "unknown": 2
+      },
+      "access_summary": {
+        "self_serve": 8,
+        "other_or_unknown": 2
+      },
+      "blockers": {
+        "app_review": 2
+      }
+    }
+  },
+  "easy_wins": [
+    "Pipedrive",
+    "Attio",
+    "Twenty",
+    "Podio",
+    "Close",
+    "Copper",
+    "Zendesk",
+    "Freshdesk",
+    "LiveAgent",
+    "Plain",
+    "Help Scout",
+    "Telegram",
+    "Aircall",
+    "Vonage",
+    "Mailchimp",
+    "systeme.io",
+    "WooCommerce",
+    "Salesforce Commerce Cloud",
+    "Gumroad",
+    "SE Ranking",
+    "Ahrefs",
+    "MrScraper",
+    "Firecrawl",
+    "Clay",
+    "GitHub",
+    "Vercel",
+    "Netlify",
+    "Supabase",
+    "Snowflake",
+    "MongoDB Atlas",
+    "Datadog",
+    "Sentry",
+    "Notion",
+    "Airtable",
+    "Linear",
+    "Jira",
+    "Asana",
+    "ClickUp",
+    "Coda",
+    "Harvest",
+    "Stripe",
+    "Brex",
+    "Ramp",
+    "Fathom",
+    "Consensus",
+    "Devin",
+    "YouTube Transcript",
+    "Grain"
+  ],
+  "outreach": {
+    "app_review": [
+      "Salesforce",
+      "Intercom",
+      "Gorgias",
+      "Slack",
+      "WhatsApp Business",
+      "Google Ads",
+      "Meta Ads",
+      "Klaviyo",
+      "Pinterest",
+      "Threads (Meta)",
+      "BigCommerce",
+      "Squarespace",
+      "fanbasis",
+      "Smartsheet",
+      "Plaid",
+      "QuickBooks",
+      "Xero"
+    ],
+    "partner_gated": [
+      "LinkedIn Ads",
+      "Waterfall.io"
+    ],
+    "enterprise_only": [
+      "PitchBook"
+    ]
+  },
+  "official_mcp": [
+    {
+      "name": "HubSpot",
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/integrate-with-the-remote-hubspot-mcp-server"
+    },
+    {
+      "name": "Attio",
+      "url": "https://mcp.attio.com/mcp"
+    },
+    {
+      "name": "Zoho CRM",
+      "url": "https://www.zoho.com/crm/developer/docs/mcp/overview.html"
+    },
+    {
+      "name": "Copper",
+      "url": "https://www.copper.com/mcp"
+    },
+    {
+      "name": "Intercom",
+      "url": "https://developers.intercom.com/docs/guides/mcp"
+    },
+    {
+      "name": "Front",
+      "url": "https://community.front.com/groups/beta-mcp-server-83"
+    },
+    {
+      "name": "Pylon",
+      "url": "https://mcp.usepylon.com"
+    },
+    {
+      "name": "Plain",
+      "url": "https://mcp.plain.com/mcp"
+    },
+    {
+      "name": "Gorgias",
+      "url": "https://mcp.gorgias.com/mcp"
+    },
+    {
+      "name": "Slack",
+      "url": "https://slack.com/help/articles/48855576908307-Guide-to-MCP-in-Slack"
+    },
+    {
+      "name": "Twilio",
+      "url": "https://mcp.twilio.com/docs"
+    },
+    {
+      "name": "Zoho Cliq",
+      "url": "https://www.zoho.com/mcp/"
+    },
+    {
+      "name": "Lark (Larksuite)",
+      "url": "https://open.larksuite.com/page/mcp"
+    },
+    {
+      "name": "Pumble",
+      "url": "https://mcp.pumble.com/mcp"
+    },
+    {
+      "name": "Aircall",
+      "url": "https://mcp.aircall.io/mcp"
+    },
+    {
+      "name": "Google Ads",
+      "url": "https://developers.google.com/google-ads/api/docs/developer-toolkit/mcp-server"
+    },
+    {
+      "name": "Klaviyo",
+      "url": "https://mcp.klaviyo.com/mcp"
+    },
+    {
+      "name": "systeme.io",
+      "url": "https://developer.systeme.io/docs/mcp-server"
+    },
+    {
+      "name": "Pinterest",
+      "url": "https://developers.pinterest.com/about-pinterest-mcp"
+    },
+    {
+      "name": "Shopify",
+      "url": "https://shopify.dev/docs/apps/build/devmcp"
+    },
+    {
+      "name": "Squarespace",
+      "url": "https://mcp.squarespace.com/mcp"
+    },
+    {
+      "name": "Gumroad",
+      "url": "https://gumroad.com/claude/v1/mcp"
+    },
+    {
+      "name": "DataForSEO",
+      "url": "https://mcp.dataforseo.com/mcp"
+    },
+    {
+      "name": "SE Ranking",
+      "url": "https://seranking.com/api/integrations/mcp"
+    },
+    {
+      "name": "Apify",
+      "url": "https://mcp.apify.com"
+    },
+    {
+      "name": "Firecrawl",
+      "url": "https://mcp.firecrawl.dev/v2/mcp"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/copilot-for-common-tasks/use-the-github-mcp-server"
+    },
+    {
+      "name": "Vercel",
+      "url": "https://vercel.com/docs/mcp/vercel-mcp"
+    },
+    {
+      "name": "Cloudflare",
+      "url": "https://mcp.cloudflare.com/mcp"
+    },
+    {
+      "name": "Supabase",
+      "url": "https://mcp.supabase.com/mcp?features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching%2Cfeedback%2Cnotebooks"
+    },
+    {
+      "name": "MongoDB Atlas",
+      "url": "https://www.mongodb.com/products/tools/mcp-server"
+    },
+    {
+      "name": "Notion",
+      "url": "https://mcp.notion.com/mcp"
+    },
+    {
+      "name": "Linear",
+      "url": "https://linear.app/changelog/2025-05-01-mcp"
+    },
+    {
+      "name": "ClickUp",
+      "url": "https://mcp.clickup.com/mcp"
+    },
+    {
+      "name": "Coda",
+      "url": "https://coda.io/resources/guides/getting_started_with_coda_mcp"
+    },
+    {
+      "name": "Smartsheet",
+      "url": "https://mcp.smartsheet.com"
+    },
+    {
+      "name": "Stripe",
+      "url": "https://mcp.stripe.com"
+    },
+    {
+      "name": "Plaid",
+      "url": "https://api.dashboard.plaid.com/mcp/"
+    },
+    {
+      "name": "QuickBooks",
+      "url": "https://developer.intuit.com/app/developer/qbo/docs/get-started/mcp-connector"
+    },
+    {
+      "name": "Xero",
+      "url": "https://developer.xero.com/documentation/guides/remote-mcp/overview"
+    },
+    {
+      "name": "Brex",
+      "url": "https://api.brex.com/mcp"
+    },
+    {
+      "name": "Otter AI",
+      "url": "https://mcp.otter.ai/mcp"
+    },
+    {
+      "name": "Consensus",
+      "url": "https://mcp.consensus.app/mcp"
+    },
+    {
+      "name": "Reducto",
+      "url": "https://mcp.reducto.ai/mcp"
+    },
+    {
+      "name": "Devin",
+      "url": "https://mcp.devin.ai/"
+    },
+    {
+      "name": "YouTube Transcript",
+      "url": "https://transcriptapi.com/mcp"
+    },
+    {
+      "name": "Grain",
+      "url": "https://developers.grain.com/mcp"
+    }
+  ],
+  "unknown_counts": {
+    "auth_methods": 7,
+    "self_serve": 9,
+    "api_type": 5,
+    "could_not_identify": 0,
+    "unresolved": 20,
+    "official_mcp_unconfirmed": 53,
+    "not_applicable": 2
+  }
+}

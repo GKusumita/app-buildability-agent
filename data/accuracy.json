@@ -1,0 +1,223 @@
+{
+  "gold_n": 12,
+  "skipped_invalid_labels": {
+    "auth_methods": 8,
+    "self_serve": 7,
+    "app_review_required": 11,
+    "api_type": 11,
+    "official_mcp": 0,
+    "verdict": 0,
+    "blocker": 0
+  },
+  "small_sample_warning": "Partially labelled gold sample; percentages are descriptive, not a population estimate.",
+  "passes": {
+    "pass1": {
+      "n": 12,
+      "per_field": {
+        "auth_methods": {
+          "correct": 2,
+          "total": 4,
+          "percent": 50.0
+        },
+        "self_serve": {
+          "correct": 1,
+          "total": 5,
+          "percent": 20.0
+        },
+        "app_review_required": {
+          "correct": 1,
+          "total": 1,
+          "percent": 100.0
+        },
+        "api_type": {
+          "correct": 1,
+          "total": 1,
+          "percent": 100.0
+        },
+        "official_mcp": {
+          "correct": 1,
+          "total": 11,
+          "percent": 9.1
+        },
+        "verdict": {
+          "correct": 0,
+          "total": 0,
+          "percent": null
+        },
+        "blocker": {
+          "correct": 0,
+          "total": 0,
+          "percent": null
+        }
+      },
+      "overall": {
+        "correct": 6,
+        "total": 22,
+        "percent": 27.3
+      },
+      "verdict_accuracy": {
+        "correct": 0,
+        "total": 0,
+        "percent": null
+      },
+      "verdict_confusion": {},
+      "all_fields_correct_apps": []
+    },
+    "pass2": {
+      "n": 12,
+      "per_field": {
+        "auth_methods": {
+          "correct": 0,
+          "total": 4,
+          "percent": 0.0
+        },
+        "self_serve": {
+          "correct": 3,
+          "total": 5,
+          "percent": 60.0
+        },
+        "app_review_required": {
+          "correct": 0,
+          "total": 1,
+          "percent": 0.0
+        },
+        "api_type": {
+          "correct": 0,
+          "total": 1,
+          "percent": 0.0
+        },
+        "official_mcp": {
+          "correct": 6,
+          "total": 12,
+          "percent": 50.0
+        },
+        "verdict": {
+          "correct": 0,
+          "total": 0,
+          "percent": null
+        },
+        "blocker": {
+          "correct": 0,
+          "total": 0,
+          "percent": null
+        }
+      },
+      "overall": {
+        "correct": 9,
+        "total": 23,
+        "percent": 39.1
+      },
+      "verdict_accuracy": {
+        "correct": 0,
+        "total": 0,
+        "percent": null
+      },
+      "verdict_confusion": {},
+      "all_fields_correct_apps": []
+    },
+    "pass3": {
+      "n": 12,
+      "per_field": {
+        "auth_methods": {
+          "correct": 2,
+          "total": 4,
+          "percent": 50.0
+        },
+        "self_serve": {
+          "correct": 1,
+          "total": 5,
+          "percent": 20.0
+        },
+        "app_review_required": {
+          "correct": 1,
+          "total": 1,
+          "percent": 100.0
+        },
+        "api_type": {
+          "correct": 1,
+          "total": 1,
+          "percent": 100.0
+        },
+        "official_mcp": {
+          "correct": 1,
+          "total": 12,
+          "percent": 8.3
+        },
+        "verdict": {
+          "correct": 0,
+          "total": 0,
+          "percent": null
+        },
+        "blocker": {
+          "correct": 0,
+          "total": 0,
+          "percent": null
+        }
+      },
+      "overall": {
+        "correct": 6,
+        "total": 23,
+        "percent": 26.1
+      },
+      "verdict_accuracy": {
+        "correct": 0,
+        "total": 0,
+        "percent": null
+      },
+      "verdict_confusion": {},
+      "all_fields_correct_apps": []
+    },
+    "pass3_v2": {
+      "n": 12,
+      "per_field": {
+        "auth_methods": {
+          "correct": 2,
+          "total": 4,
+          "percent": 50.0
+        },
+        "self_serve": {
+          "correct": 1,
+          "total": 5,
+          "percent": 20.0
+        },
+        "app_review_required": {
+          "correct": 1,
+          "total": 1,
+          "percent": 100.0
+        },
+        "api_type": {
+          "correct": 1,
+          "total": 1,
+          "percent": 100.0
+        },
+        "official_mcp": {
+          "correct": 1,
+          "total": 12,
+          "percent": 8.3
+        },
+        "verdict": {
+          "correct": 0,
+          "total": 0,
+          "percent": null
+        },
+        "blocker": {
+          "correct": 0,
+          "total": 0,
+          "percent": null
+        }
+      },
+      "overall": {
+        "correct": 6,
+        "total": 23,
+        "percent": 26.1
+      },
+      "verdict_accuracy": {
+        "correct": 0,
+        "total": 0,
+        "percent": null
+      },
+      "verdict_confusion": {},
+      "all_fields_correct_apps": []
+    }
+  }
+}

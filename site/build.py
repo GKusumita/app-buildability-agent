@@ -1,7 +1,6 @@
 """Build a single static report, showing pending stages honestly."""
 from __future__ import annotations
 
-import csv
 import json
 import os
 from pathlib import Path
@@ -19,10 +18,19 @@ def read_json(path: Path) -> dict | None:
 
 
 def main() -> None:
-    final = read_json(ROOT / "data" / "pass3_final.json") or read_json(ROOT / "data" / "pass3.json")
+    final = (read_json(ROOT / "data" / "pass3_final_v2.json")
+             or read_json(ROOT / "data" / "pass3_final.json")
+             or read_json(ROOT / "data" / "pass3.json"))
     accuracy = read_json(ROOT / "data" / "accuracy.json")
-    patterns = read_json(ROOT / "data" / "patterns_final.json") or read_json(ROOT / "data" / "patterns.json")
+    patterns = (read_json(ROOT / "data" / "patterns_final_v2.json")
+                or read_json(ROOT / "data" / "patterns_final.json")
+                or read_json(ROOT / "data" / "patterns.json"))
     queue = read_json(ROOT / "data" / "human_queue_final.json") or read_json(ROOT / "data" / "human_queue.json")
+    if final and final.get("stage") == "pass3_final_v2" and queue:
+        retry_queue = read_json(ROOT / "data" / "human_queue_app_57_bright57_v2.json")
+        if retry_queue and retry_queue["apps"]:
+            queue["apps"] = [retry_queue["apps"][0] if item["id"] == 57 else item
+                             for item in queue["apps"]]
     delivery = read_json(ROOT / "data" / "composio_delivery.json")
     apps = load_apps()
     rows = {row["result"]["id"]: row for row in final["records"]} if final else {}
@@ -36,18 +44,16 @@ def main() -> None:
                                        "verdict": "pending", "auth_methods": [],
                                        "evidence": [], "confidence": "pending"},
                             "queries": [], "pages": [], "errors": [], "evidence_invalid": []})
-    misses = []
-    errors_path = ROOT / "data" / "errors.csv"
-    if errors_path.exists():
-        with errors_path.open(newline="", encoding="utf-8-sig") as handle:
-            misses = list(csv.DictReader(handle))
+    for row in results:
+        if row["result"].get("official_mcp") == "unknown":
+            row["result"]["official_mcp"] = "unconfirmed"
     payload = {
         "status": "complete" if final and len(rows) == len(apps) else "pending",
         "total_apps": len(apps), "verified_apps": len(rows),
         "results": results, "patterns": patterns, "accuracy": accuracy,
         "human_queue": queue["apps"] if queue else [],
         "human_queue_summary": {key: queue[key] for key in ("sample_size", "queued_count", "queue_rate")}
-        if queue else None, "misses": misses,
+        if queue else None, "misses": [],
         "provider_failure_count": sum(any("generativelanguage.googleapis.com" in error
                                           or "openrouter.ai/api/v1" in error
                                           for error in row.get("errors", [])) for row in results),

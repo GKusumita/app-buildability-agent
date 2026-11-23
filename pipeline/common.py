@@ -78,5 +78,6 @@ def path_for(stage: str, sample: bool, app: AppInput | None = None,
     tag = os.getenv("APP_RESEARCH_RUN_TAG", SAMPLE_TAG if sample else "") if tag_override is None else tag_override
     if tag and not re.fullmatch(r"[A-Za-z0-9_-]+", tag):
         raise ValueError("APP_RESEARCH_RUN_TAG must be letters, digits, _ or -")
-    suffix = ("_sample" + (f"_{tag}" if tag else "")) if sample else f"_app_{app.id}" if app else ""
+    suffix = (("_sample" + (f"_{tag}" if tag else "")) if sample else
+              (f"_app_{app.id}" + (f"_{tag}" if tag else "")) if app else "")
     return ROOT / "data" / f"{stage}{suffix}.json"

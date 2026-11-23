@@ -40,7 +40,7 @@ def compute(results: list[AppResult]) -> dict:
         if row.verdict.value == "buildable_with_outreach":
             outreach[row.blocker.value].append(row.name)
     mcp = [{"name": row.name, "url": row.official_mcp} for row in results
-           if row.official_mcp not in {"none", "unknown"}]
+           if row.official_mcp not in {"none", "unknown", "unconfirmed"}]
     return {
         "total": total, "auth_distribution": dict(auth),
         "oauth2": len(oauth), "api_key": len(api_key), "both": len(oauth & api_key),
@@ -57,18 +57,23 @@ def compute(results: list[AppResult]) -> dict:
             "self_serve": self_serve["unknown"],
             "api_type": sum("unknown" in [method.value for method in row.api_type] for row in results),
             "could_not_identify": verdicts["could_not_identify"],
+            "unresolved": verdicts["unresolved"],
+            "official_mcp_unconfirmed": sum(row.official_mcp in {"unknown", "unconfirmed"}
+                                             for row in results),
             "not_applicable": verdicts["not_applicable"],
         },
     }
 
 
 def main() -> None:
+    v2 = ROOT / "data" / "pass3_final_v2.json"
     final = ROOT / "data" / "pass3_final.json"
-    source = final if final.exists() else ROOT / "data" / "pass3.json"
+    source = v2 if v2.exists() else final if final.exists() else ROOT / "data" / "pass3.json"
     if not source.exists():
         raise SystemExit("Run full pass3 first")
     results = [AppResult.model_validate(row["result"]) for row in read_pass(source)["records"]]
-    output = ROOT / "data" / ("patterns_final.json" if source == final else "patterns.json")
+    output = ROOT / "data" / ("patterns_final_v2.json" if source == v2 else
+                              "patterns_final.json" if source == final else "patterns.json")
     write_immutable(output, compute(results))
     print(f"Computed patterns from {len(results)} final rows")
 

@@ -1,0 +1,41 @@
+{
+  "sample_size": 1,
+  "queued_count": 1,
+  "queue_rate": 1.0,
+  "apps": [
+    {
+      "id": 57,
+      "name": "Bright Data",
+      "research_failures": [
+        "Grounded call: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "auth_methods: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "self_serve: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "unresolved research field: api_type",
+        "unresolved research field: auth_methods",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      ],
+      "verifier_rejections": [
+        "Verifier call failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "api_type: insufficient_evidence: Verifier failed",
+        "api_type: retry verification failed: Client error '429 Too Many Requests' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429",
+        "auth_methods: insufficient_evidence: Verifier failed",
+        "self_serve: insufficient_evidence: Verifier failed",
+        "verdict: insufficient_evidence: Verifier failed"
+      ],
+      "unknown_fields": [
+        "auth_methods",
+        "self_serve",
+        "app_review_required",
+        "api_type",
+        "api_breadth",
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ],
+      "confidence": "low"
+    }
+  ]
+}

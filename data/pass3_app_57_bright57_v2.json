@@ -1,0 +1,99 @@
+{
+  "stage": "pass3_verified",
+  "created_at": "2026-11-23T16:38:31.855954+00:00",
+  "records": [
+    {
+      "result": {
+        "id": 57,
+        "name": "Bright Data",
+        "category": "Data, SEO and Scraping",
+        "one_liner": "Unknown; usable documentation could not be identified.",
+        "auth_methods": [
+          "unknown"
+        ],
+        "self_serve": "unknown",
+        "app_review_required": "unknown",
+        "api_type": [
+          "unknown"
+        ],
+        "api_breadth": "unclear",
+        "official_mcp": "unknown",
+        "webhooks": "unknown",
+        "rate_limits": "unknown",
+        "verdict": "could_not_identify",
+        "blocker": "none",
+        "blocker_note": "",
+        "evidence": [],
+        "confidence": "low",
+        "notes": "Grounded call failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent' For more information check: https://developer.mozilla.org/en-US/docs/Web/HT"
+      },
+      "queries": [
+        "Bright Data brightdata.com API authentication",
+        "Bright Data brightdata.com API getting started get API key credentials",
+        "Bright Data API pricing access requirements partner program",
+        "Bright Data MCP server official",
+        "Bright Data official developer authentication OAuth API key",
+        "Bright Data official API credentials signup free trial partner approval pricing",
+        "Bright Data official API reference REST GraphQL endpoints",
+        "Bright Data official developer API access production approval review requirements"
+      ],
+      "pages": [
+        "https://docs.brightdata.com/api-reference/authentication",
+        "https://apideck.com/blog/quickbooks-api-pricing-and-the-intuit-app-partner-program",
+        "https://brightdata.com/pricing/mcp-server",
+        "https://brightdata.com/ai/mcp-server",
+        "https://brightdata.com",
+        "https://community.openai.com/t/configuring-dual-authentication-oauth-and-api-key/504763",
+        "https://publicapis.io/blog/oauth-vs-api-key-authentication-gri5",
+        "https://mailchimp.com/developer/marketing/guides/access-user-data-oauth-2",
+        "https://www.eazemyapi.com/blog/api-authentication-api-key-vs-jwt-vs-oauth",
+        "https://docs.alternativepayments.io/web-sdk/authentication",
+        "https://brightdata.com/pricing",
+        "https://docs.brightdata.com/general/account/billing-and-pricing/free-tier",
+        "https://brightdata.com/blog/comparison/bright-data-vs-zyte",
+        "https://app.stationx.net/articles/bright-data-review",
+        "https://tavily.com/knowledge/company/Dh6M3Eqcqufc",
+        "https://brightdata.com/glossary/api",
+        "https://docs.brightdata.com/api-reference/rest-api/scraper/asynchronous-requests",
+        "https://docs.brightdata.com/api-reference/rest-api/serp/serp-api",
+        "https://docs.brightdata.com/api-reference/scrapers/synchronous-requests",
+        "https://github.com/api-evangelist/brightdata",
+        "https://brightdata.com/products/data-feeds/web-search-api",
+        "https://docs.brightdata.com/general/security/security-overview",
+        "https://github.com/brightdata/cli"
+      ],
+      "usage": {
+        "retry_api_type": {
+          "promptTokenCount": 46535,
+          "candidatesTokenCount": 121,
+          "totalTokenCount": 46656,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 46535
+            }
+          ],
+          "serviceTier": "standard"
+        }
+      },
+      "errors": [
+        "Grounded call: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "auth_methods: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "self_serve: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "unresolved research field: api_type",
+        "unresolved research field: auth_methods",
+        "unresolved research field: self_serve",
+        "unresolved research field: verdict",
+        "verdict: retry research failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "Verifier call failed: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+        "api_type: insufficient_evidence: Verifier failed",
+        "api_type: retry verification failed: Client error '429 Too Many Requests' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429",
+        "auth_methods: insufficient_evidence: Verifier failed",
+        "self_serve: insufficient_evidence: Verifier failed",
+        "verdict: insufficient_evidence: Verifier failed"
+      ],
+      "evidence_invalid": [],
+      "deterministic_rules": []
+    }
+  ]
+}

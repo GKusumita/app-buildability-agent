@@ -1,0 +1,68 @@
+{
+  "decisions": [
+    {
+      "app_id": 57,
+      "app": "Bright Data",
+      "decisions": [
+        {
+          "field": "auth_methods",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": null,
+          "retry_error": "Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+        },
+        {
+          "field": "self_serve",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": null,
+          "retry_error": "Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+        },
+        {
+          "field": "api_type",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": null,
+          "retry_error": "Client error '429 Too Many Requests' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        },
+        {
+          "field": "app_review_required",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": null,
+          "skipped": true
+        },
+        {
+          "field": "verdict",
+          "initial": {
+            "status": "insufficient_evidence",
+            "reason": "Verifier failed"
+          },
+          "retry": null,
+          "retry_error": "Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+        }
+      ],
+      "consistency": null,
+      "computed_confidence": "low",
+      "unknown_fields": [
+        "auth_methods",
+        "self_serve",
+        "app_review_required",
+        "api_type",
+        "api_breadth",
+        "official_mcp",
+        "webhooks",
+        "rate_limits",
+        "verdict"
+      ]
+    }
+  ]
+}

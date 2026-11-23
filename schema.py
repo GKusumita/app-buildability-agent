@@ -79,6 +79,7 @@ class Verdict(Closed):
     BLOCKED = "blocked"
     NA = "not_applicable"
     UNIDENTIFIED = "could_not_identify"
+    UNRESOLVED = "unresolved"
 
 
 class Blocker(Closed):
@@ -161,7 +162,7 @@ class AppResult(BaseModel):
     @field_validator("official_mcp")
     @classmethod
     def official_mcp_url(cls, value: str) -> str:
-        if value in {"none", "unknown"}:
+        if value in {"none", "unknown", "unconfirmed"}:
             return value
         parsed = urlparse(value)
         if parsed.scheme not in {"http", "https"} or not parsed.netloc:
