@@ -195,7 +195,7 @@ async def run() -> None:
                                 TargetAnswer, f"retry:{app.id}:{field}")
                             usage[f"retry_{field}"] = retry_usage
                             candidate = patch_target(result, field, answer)
-                            candidate, invalid = validate_evidence(candidate, pages, set(pages) | source_urls)
+                            candidate, invalid = validate_evidence(candidate, pages)
                             if invalid and any(item.startswith(field + ":") for item in invalid):
                                 raise ValueError("retry evidence_invalid: " + "; ".join(invalid))
                             recheck, recheck_usage = await verify(client, candidate, pages,
@@ -219,6 +219,10 @@ async def run() -> None:
                     reasons.append("confidence=low")
                 if result.verdict == Verdict.UNIDENTIFIED:
                     reasons.append("could_not_identify or verdict remains unsupported")
+                for field in ("auth_methods", "self_serve", "api_type"):
+                    value = getattr(result, field)
+                    if value in ([Auth.UNKNOWN], [APIType.UNKNOWN], SelfServe.UNKNOWN):
+                        reasons.append(f"{field} remains unknown")
                 return (result_record(result, queries=all_queries, pages=list(pages), usage=usage,
                                       errors=reasons, evidence_invalid=original["evidence_invalid"]),
                         {"app_id": app.id, "app": app.name, "decisions": decisions,

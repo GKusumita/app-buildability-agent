@@ -5,6 +5,7 @@ import asyncio
 import hashlib
 import json
 import os
+from contextlib import AsyncExitStack
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -47,7 +48,13 @@ class Tavily:
         path = cache_file("search", cache_key)
         async with self.locks.setdefault(str(path), asyncio.Lock()):
             if path.exists():
-                return json.loads(path.read_text(encoding="utf-8"))
+                data = json.loads(path.read_text(encoding="utf-8"))
+                for item in data.get("results", []):
+                    if item.get("url"):
+                        result_path = cache_file("search_result", item["url"])
+                        if not result_path.exists():
+                            result_path.write_text(json.dumps(item, ensure_ascii=False), encoding="utf-8")
+                return data
             payload = {"query": query, "search_depth": "basic", "max_results": 5,
                        "include_answer": False, "include_raw_content": False}
             if domains:
@@ -62,26 +69,30 @@ class Tavily:
 
     async def extract(self, urls: list[str]) -> dict[str, str]:
         pages: dict[str, str] = {}
-        missing = []
-        for url in urls:
-            path = cache_file("page", url)
-            if path.exists():
-                pages[url] = json.loads(path.read_text(encoding="utf-8")).get("raw_content", "")
-            else:
-                missing.append(url)
-        if missing:
-            data = await self._post("extract", {"urls": missing, "extract_depth": "basic",
-                                                "format": "markdown", "include_usage": True})
-            results = {item.get("url"): item for item in data.get("results", [])}
-            errors = {item.get("url"): item for item in data.get("failed_results", [])}
-            for url in missing:
-                item = results.get(url, {})
-                raw = item.get("raw_content", "") or ""
-                # Even failed extracts are cached so a rerun does not spend credits again.
-                cache_file("page", url).write_text(
-                    json.dumps({"url": url, "raw_content": raw,
-                                "error": errors.get(url)}, ensure_ascii=False), encoding="utf-8")
-                pages[url] = raw
+        # Lock in stable URL order so overlapping app batches cannot buy the same page twice.
+        async with AsyncExitStack() as stack:
+            for url in sorted(set(urls)):
+                await stack.enter_async_context(self.locks.setdefault("page:" + url, asyncio.Lock()))
+            missing = []
+            for url in urls:
+                path = cache_file("page", url)
+                if path.exists():
+                    pages[url] = json.loads(path.read_text(encoding="utf-8")).get("raw_content", "")
+                else:
+                    missing.append(url)
+            if missing:
+                data = await self._post("extract", {"urls": missing, "extract_depth": "basic",
+                                                    "format": "markdown", "include_usage": True})
+                results = {item.get("url"): item for item in data.get("results", [])}
+                errors = {item.get("url"): item for item in data.get("failed_results", [])}
+                for url in missing:
+                    item = results.get(url, {})
+                    raw = item.get("raw_content", "") or ""
+                    # Even failed extracts are cached so a rerun does not spend credits again.
+                    cache_file("page", url).write_text(
+                        json.dumps({"url": url, "raw_content": raw,
+                                    "error": errors.get(url)}, ensure_ascii=False), encoding="utf-8")
+                    pages[url] = raw
         return pages
 
 
@@ -97,7 +108,9 @@ def queries_for(app: AppInput) -> list[tuple[str, list[str] | None]]:
 
 def choose_urls(searches: list[dict], domain: str | None, limit: int = 5) -> list[str]:
     candidates: dict[str, int] = {}
+    per_query: list[list[str]] = []
     for search in searches:
+        query_urls = []
         for item in search.get("results", []):
             url = item.get("url", "")
             parsed = urlparse(url)
@@ -107,7 +120,17 @@ def choose_urls(searches: list[dict], domain: str | None, limit: int = 5) -> lis
             score = 3 if domain and (parsed.netloc == domain or parsed.netloc.endswith("." + domain)) else 0
             score += sum(word in context for word in ("auth", "getting-started", "api-key", "pricing", "developer", "mcp"))
             candidates[url] = max(score, candidates.get(url, 0))
-    return sorted(candidates, key=lambda url: (-candidates[url], url))[:limit]
+            query_urls.append(url)
+        per_query.append(query_urls)
+    selected = []
+    for query_urls in per_query:
+        if query_urls:
+            best = sorted(query_urls, key=lambda url: (-candidates[url], url))[0]
+            if best not in selected:
+                selected.append(best)
+    selected.extend(url for url in sorted(candidates, key=lambda url: (-candidates[url], url))
+                    if url not in selected)
+    return selected[:limit]
 
 
 def prompt_pages(pages: dict[str, str], max_chars: int = 9500) -> str:

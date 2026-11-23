@@ -176,10 +176,16 @@ class AppResult(BaseModel):
     def basic_consistency(self) -> "AppResult":
         if self.blocker != Blocker.NONE and not self.blocker_note.strip():
             raise ValueError("blocker_note required for a blocker")
+        if not self.auth_methods or not self.api_type:
+            raise ValueError("auth_methods and api_type must be nonempty; use unknown if needed")
         if Auth.UNKNOWN in self.auth_methods and len(self.auth_methods) > 1:
             raise ValueError("unknown auth must stand alone")
+        if Auth.NONE in self.auth_methods and len(self.auth_methods) > 1:
+            raise ValueError("none auth must stand alone")
         if APIType.UNKNOWN in self.api_type and len(self.api_type) > 1:
             raise ValueError("unknown api_type must stand alone")
+        if APIType.NONE in self.api_type and len(self.api_type) > 1:
+            raise ValueError("none api_type must stand alone")
         return self
 
 

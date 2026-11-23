@@ -47,6 +47,7 @@ def validate_evidence(result: AppResult, pages: dict[str, str],
 
 
 def set_unknown(result: AppResult, field: str) -> None:
+    result.confidence = Confidence.LOW
     if field == "auth_methods":
         result.auth_methods = [Auth.UNKNOWN]
     elif field == "self_serve":
